@@ -1,0 +1,38 @@
+{
+  "name": "intranet-server",
+  "version": "1.0.0",
+  "description": "Intranet Server",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js --exec babel-node",
+    "build": "babel src --out-dir build",
+    "start": "node build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dextroxitohero/Intranet-server.git"
+  },
+  "keywords": [],
+  "author": "Eric Hernandez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dextroxitohero/Intranet-server/issues"
+  },
+  "homepage": "https://github.com/Dextroxitohero/Intranet-server#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.3",
+    "@babel/node": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
+    "nodemon": "^2.0.21"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
+    "mongoose": "^7.0.2",
+    "morgan": "^1.10.0"
+  }
+}
