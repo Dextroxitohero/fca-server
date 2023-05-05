@@ -1,7 +1,8 @@
 import User from '../models/User'
 import { createAccessToken } from '../libs/creationWebToken';
-import config from '../config'
+import { SECRET } from '../config';
 import jwt from 'jsonwebtoken'
+import { sendMail } from '../libs/sendMail';
 
 
 // export const signUp = async (req, res) => {
@@ -53,16 +54,18 @@ export const signUp = async (req, res) => {
         }
 
 
-        const activationToken = createAccessToken(newUser);
+        const activationToken = await createAccessToken(newUser);
+
 
         const activationUrl = `http://localhost:3000/activation/${activationToken}`;
 
-        console.log(activationUrl)
+        // console.log(activationUrl)
 
-        // const token = await createAccessToken(savedUser)
-
-
-
+        await sendMail({
+            email: newUser.email,
+            subject: "Activate your account",
+            message: `Hello ${newUser.email}, please click on the link to activate your account: ${activationUrl}`,
+          });
 
         return res.status(201).json({
             success: true,
@@ -75,8 +78,49 @@ export const signUp = async (req, res) => {
             message: "Server error, try again!!!"
         })
     }
+}
 
+export const activation = async (req, res) => {
+    try {
+        const { activation_token } = req.body;
 
+        const newUserVerify = jwt.verify(
+            activation_token,
+            SECRET
+        );
+
+        
+        if (!newUserVerify) {
+            return res.status(400).json({
+                message: "Invalid token"
+            })
+        }
+        
+        const { email, password } = newUserVerify;
+                
+        const foundUser = await User.findOne({ email });
+        
+        
+        if (foundUser) {
+            console.log(`Ya esta el usuario ${foundUser}`)
+            return res.status(400).json({
+                message: "User already exists"
+            })
+        }
+
+        const newUser = await User.create({
+            email,
+            password,
+        });
+
+        return res.status(201).json({
+            success: true,
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: "Server error, try again!!!"
+        })
+    }
 }
 
 export const login = async (req, res) => {

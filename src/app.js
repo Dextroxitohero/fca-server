@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import pkg from '../package.json';
-
+import cookieParser from 'cookie-parser';
 
 
 import usersRoutes from './routes/users.routes';
@@ -10,6 +10,8 @@ import authRoutes from './routes/auth.routes'
 // import syncRoutes from './routes/sync.routes'
 
 const app = express()
+
+app.use(cookieParser())
 
 app.set('pkg', pkg)
 

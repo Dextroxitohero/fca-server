@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { SECRET } from '../config';
 
-export const createAccessToken = async ({ _id, email }) => {
+export const createAccessToken = async ({ email, password }) => {
     const payLoad = {
-        uid: _id,
-        email
+        email,
+        password
     }
     const token = jwt.sign(payLoad, SECRET, {
-        expiresIn: '2h'
+        expiresIn: '5m'
     })
     return token
 }

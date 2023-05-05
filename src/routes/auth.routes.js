@@ -7,10 +7,13 @@ import { verifySignUp, authJwt } from '../middlewares'
 
 router.post('/signup',
     [
-        verifySignUp.checkDuplicateUsernameOrEmail,
+        // verifySignUp.checkDuplicateUsernameOrEmail,
         verifySignUp.checkPassword
     ],
     authCtrl.signUp
+)
+router.post('/activation',
+    authCtrl.activation
 )
 
 router.post('/login',
