@@ -121,14 +121,14 @@ export const activation = async (req, res) => {
             message: "Server error, try again!!!"
         })
     }
-}
+} 
+
 
 export const login = async (req, res) => {
     try {
         const userFound = await User.findOne({
             email: req.body.email
         })
-
         if (!userFound) {
             return res.status(404).json({
                 message: 'User not found'
@@ -156,6 +156,8 @@ export const login = async (req, res) => {
         })
     }
 }
+
+
 
 export const refreshAccessToken = async (req, res) => {
 

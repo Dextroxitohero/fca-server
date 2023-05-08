@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import pkg from '../package.json';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 
 import usersRoutes from './routes/users.routes';
@@ -10,6 +11,12 @@ import authRoutes from './routes/auth.routes'
 // import syncRoutes from './routes/sync.routes'
 
 const app = express()
+
+// app.use(cors({
+// 	origin: 'http://localhost:3000',
+// 	credentials: true
+//   }));
+  
 
 app.use(cookieParser())
 

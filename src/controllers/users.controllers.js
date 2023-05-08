@@ -26,32 +26,28 @@ export const createUser = async (req, res) => {
 	}
 }
 
-export const getUsers = async (req, res) => {
+export const getUser = async (req, res) => {
+
+	const { userId } = req.params 
+
 	try {
-		const users = await User.find()
+		const user = await User.findById(userId)
 
 		return res.status(200).json({
-			data: users
+			data: user
 		})
 
 	} catch (error) {
-		return res.status(500).json({
-			message: 'Error Server'
+		return res.status(404).json({
+			message: 'User no fount'
 		})
-
 	}
 }
 
-export const getUsersById = async (req, res) => {
+export const getAllUser = async (req, res) => {
 	try {
 
-		const user = await User.findById(req.params.userId)
-
-		if (user === null) {
-			return res.status(404).json({
-				message: 'User no fount'
-			})
-		}
+		const user = await User.find()
 
 		return res.status(200).json({
 			data: user
