@@ -1,8 +1,10 @@
 import User from '../models/User'
-import { createAccessToken } from '../libs/creationWebToken';
-import { SECRET } from '../config';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+
+import { createAccessToken, createActivationToken } from '../libs/creationWebToken';
+import { createCookieAccessAuth } from '../libs/jwtToken';
 import { sendMail } from '../libs/sendMail';
+import { SECRET } from '../config';
 
 
 // export const signUp = async (req, res) => {
@@ -53,19 +55,15 @@ export const signUp = async (req, res) => {
             password: await User.encryptPassword(password)
         }
 
-
-        const activationToken = await createAccessToken(newUser);
-
+        const activationToken = await createActivationToken(newUser);
 
         const activationUrl = `http://localhost:3000/activation/${activationToken}`;
-
-        // console.log(activationUrl)
 
         await sendMail({
             email: newUser.email,
             subject: "Activate your account",
             message: `Hello ${newUser.email}, please click on the link to activate your account: ${activationUrl}`,
-          });
+        });
 
         return res.status(201).json({
             success: true,
@@ -88,19 +86,19 @@ export const activation = async (req, res) => {
             activation_token,
             SECRET
         );
-
         
+        console.log(newUserVerify)
+
         if (!newUserVerify) {
             return res.status(400).json({
                 message: "Invalid token"
             })
         }
-        
+
         const { email, password } = newUserVerify;
-                
+
         const foundUser = await User.findOne({ email });
-        
-        
+
         if (foundUser) {
             console.log(`Ya esta el usuario ${foundUser}`)
             return res.status(400).json({
@@ -113,15 +111,16 @@ export const activation = async (req, res) => {
             password,
         });
 
-        return res.status(201).json({
-            success: true,
-        })
+        const token = await createAccessToken(newUser)
+
+        createCookieAccessAuth(newUser, token, 201, res)
+
     } catch (error) {
         res.status(500).json({
             message: "Server error, try again!!!"
         })
     }
-} 
+}
 
 
 export const login = async (req, res) => {
@@ -144,11 +143,7 @@ export const login = async (req, res) => {
 
         const token = await createAccessToken(userFound)
 
-        return res.status(200).json({
-            uid: userFound._id,
-            name: userFound.email,
-            token
-        })
+        createCookieAccessAuth(userFound, token, 201, res)
 
     } catch (err) {
         return res.status(500).json({

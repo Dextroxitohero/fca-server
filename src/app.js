@@ -12,25 +12,18 @@ import authRoutes from './routes/auth.routes'
 
 const app = express()
 
-// app.use(cors({
-// 	origin: 'http://localhost:3000',
-// 	credentials: true
-//   }));
-  
-
-app.use(cookieParser())
-
-app.set('pkg', pkg)
-
-
-app.use(morgan('dev'))
-
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 
 app.use(express.json({
 	limit: "50mb",
 	extended: false
 }))
 
+app.use(cookieParser())
+
+app.use(morgan('dev'))
+
+app.set('pkg', pkg)
 
 app.get('/', (req, res) => {
 	res.json({
@@ -43,11 +36,12 @@ app.get('/', (req, res) => {
 
 // Configure Header HTTP
 app.use((req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header(
-		"Access-Control-Allow-Headers",
-		"x-access-token, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
-	);
+	// res.header("Access-Control-Allow-Origin", "*");
+	// res.header(
+	// 	"Access-Control-Allow-Headers",
+	// 	"x-access-token, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
+	// );
+	// res.header("Access-Control-Allow-Credentials", true);
 	res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
 	res.header("Allow", "GET, POST");
 	next();

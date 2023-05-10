@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import bcrypt from 'bcryptjs'
+import { SECRET, JWT_EXPIRES  } from '../config';
 
 
 const userSchema =  new Schema({
