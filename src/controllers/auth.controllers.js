@@ -2,7 +2,7 @@ import User from '../models/User'
 import jwt from 'jsonwebtoken';
 
 import { createAccessToken, createActivationToken } from '../libs/creationWebToken';
-import { createCookieAccessAuth } from '../libs/jwtToken';
+import { createCookieAccessAuth, createCookieLogout } from '../libs/jwtToken';
 import { sendMail } from '../libs/sendMail';
 import { SECRET } from '../config';
 
@@ -87,8 +87,6 @@ export const activation = async (req, res) => {
             SECRET
         );
         
-        console.log(newUserVerify)
-
         if (!newUserVerify) {
             return res.status(400).json({
                 message: "Invalid token"
@@ -100,7 +98,6 @@ export const activation = async (req, res) => {
         const foundUser = await User.findOne({ email });
 
         if (foundUser) {
-            console.log(`Ya esta el usuario ${foundUser}`)
             return res.status(400).json({
                 message: "User already exists"
             })
@@ -143,11 +140,21 @@ export const login = async (req, res) => {
 
         const token = await createAccessToken(userFound)
 
-        createCookieAccessAuth(userFound, token, 201, res)
+        createCookieAccessAuth(userFound, token, 200, res)
 
     } catch (err) {
         return res.status(500).json({
-            message: err
+            message: 'Ocurrio un errror'
+        })
+    }
+}
+
+export const logout = async (req, res) => {
+    try {
+        createCookieLogout(res)
+    } catch (err) {
+        return res.status(500).json({
+            message: 'Ocurrio un error'
         })
     }
 }

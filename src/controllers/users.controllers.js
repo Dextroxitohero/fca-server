@@ -28,13 +28,20 @@ export const createUser = async (req, res) => {
 
 export const getUser = async (req, res) => {
 
-	const { userId } = req.params 
 
 	try {
-		const user = await User.findById(userId)
+		const user = await User.findById(req.user._id);
+		console.log(user)
+
+		if (!user) {
+			return res.status(400).json({
+				message: "User doesn't exists"
+			})
+		}
 
 		return res.status(200).json({
-			data: user
+			success: true,
+			user
 		})
 
 	} catch (error) {
