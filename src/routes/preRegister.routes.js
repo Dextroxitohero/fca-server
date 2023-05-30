@@ -4,8 +4,9 @@ const router = Router()
 
 import * as preRegisterCtrl from '../controllers/preRegister.controllers';
 
+router.get('/', preRegisterCtrl.getAllPreRegister)
 router.post('/', preRegisterCtrl.createPreRegister)
-router.get('/:preRegisterId', preRegisterCtrl.updatePreRegisterById)
+router.put('/:preRegisterId', preRegisterCtrl.updatePreRegisterById)
 
 
 export default router

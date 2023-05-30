@@ -32,7 +32,7 @@ const preRegisterSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['prospecto', 'validando', 'completado'],
+        enum: ['prospecto', 'validado', 'completado'],
         default: 'prospecto'
     }
 }, {

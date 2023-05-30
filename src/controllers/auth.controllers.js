@@ -5,6 +5,7 @@ import { createAccessToken, createActivationToken } from '../libs/creationWebTok
 import { createCookieAccessAuth, createCookieLogout } from '../libs/jwtToken';
 import { sendMail } from '../libs/sendMail';
 import { SECRET } from '../config';
+import PreRegister from '../models/PreRegister';
 
 
 // export const signUp = async (req, res) => {
@@ -122,9 +123,11 @@ export const activation = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
+
         const userFound = await User.findOne({
             email: req.body.email
         })
+        
         if (!userFound) {
             return res.status(404).json({
                 message: 'User not found'
