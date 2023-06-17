@@ -8,7 +8,6 @@ import {
 } from '../config';
 
 export const sendMail = async (options) => {
-
     try {
         const transporter = nodemailer.createTransport({
             host: MAIL_HOST,
@@ -34,4 +33,3 @@ export const sendMail = async (options) => {
         throw error;
     }
 }
-
