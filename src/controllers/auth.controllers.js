@@ -5,7 +5,6 @@ import { createAccessToken, createActivationToken } from '../libs/creationWebTok
 import { createCookieAccessAuth, createCookieLogout } from '../libs/jwtToken';
 import { sendMail } from '../libs/sendMail';
 import { SECRET } from '../config';
-import PreRegister from '../models/PreRegister';
 
 
 // export const signUp = async (req, res) => {

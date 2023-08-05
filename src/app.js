@@ -1,4 +1,5 @@
 import express from 'express';
+import bodyParser from "body-parser";
 import morgan from 'morgan';
 import pkg from '../package.json';
 import cookieParser from 'cookie-parser';
@@ -20,6 +21,8 @@ app.use(express.json({
 	extended: false
 }))
 
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cookieParser())
 
 app.use(morgan('dev'))
@@ -35,6 +38,11 @@ app.get('/', (req, res) => {
 	})
 })
 
+// to serve images inside public folder
+app.use(express.static('uploads')); 
+app.use('/images', express.static('images'));
+
+
 // Configure Header HTTP
 app.use((req, res, next) => {
 	// res.header("Access-Control-Allow-Origin", "*");
@@ -43,6 +51,7 @@ app.use((req, res, next) => {
 	// 	"x-access-token, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
 	// );
 	// res.header("Access-Control-Allow-Credentials", true);
+	res.setHeader('Content-Type', 'multipart/form-data');
 	res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
 	res.header("Allow", "GET, POST");
 	next();

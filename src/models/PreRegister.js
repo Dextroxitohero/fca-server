@@ -18,8 +18,8 @@ const preRegisterSchema = new Schema({
         type: String,
         required: true
     },
-    age: {
-        type: Number,
+    dateBirth: {
+        type: String,
         required: true
     },
     location: {
@@ -30,10 +30,20 @@ const preRegisterSchema = new Schema({
         type: String,
         required: true
     },
+    language: {
+        type: String,
+        required: true
+    },
     status: {
         type: String,
-        enum: ['prospecto', 'validado', 'completado'],
+        enum: ['prospecto', 'validando', 'completado'],
         default: 'prospecto'
+    },
+    account: {
+        type: String,        
+    },
+    fileName: {
+        type: String,        
     }
 }, {
     timestamps: true,
