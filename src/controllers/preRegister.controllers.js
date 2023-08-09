@@ -89,7 +89,7 @@ export const createPreRegister = async (req, res) => {
         await sendMail({
             email: newPreRegister.email,
             subject: "Datos de pago",
-            message: `Te dejamos nuestros canal de pagos.`,
+            message: `Te dejamos nuestros canal de pagos. Cuando realices tu pago puedes subir tu comprobante aqui con tu correo electronico con el que te registrastes. http://localhost:3000/pre-registro`,
         });
 
         return res.status(201).json({
@@ -154,26 +154,27 @@ export const updatePreRegisterById = async (req, res) => {
 
 export const getAllPreRegister = async (req, res) => {
     try {
+
         const preRegisters = await PreRegister.find();
-        return res.status(200).json({
-            message: "Estos son todos los candidatos",
-            data: preRegisters
+
+
+        const response = preRegisters.map(item => {
+            const { _id, ...rest } = item._doc;
+            return { id: _id.toString(), ...rest };
         });
+        
+        return res.status(200).json({
+            data: response
+        });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error al obtener los registros de preinscripción' });
+
+        return res.status(500).json({
+            message: 'Error al obtener los registros de preinscripción'
+        });
+
     }
 }
-
-
-// export const validatePaymentVoucher = async (req, res) => {
-//     // Aquí puedes acceder al archivo subido con req.file
-//     // Y también puedes acceder al valor del campo 'account' con req.body.account
-//     console.log('Archivo subido:', req.file);
-//     console.log('Cuenta:', req.body.account);
-
-//     return res.status(200).json({ message: 'Archivo subido correctamente' });
-// };
 
 export const validatePaymentVoucher = async (req, res) => {
     try {
@@ -202,12 +203,11 @@ export const validatePaymentVoucher = async (req, res) => {
                 subject: "Validacion de pago",
                 message: `Tu comprobante de pago va ser valido y si todo es exitoso vas recibir un email con tus accesos.`,
             });
-    
+
 
 
             return res.status(200).json({
-                message: 'Comprobante de pago validado exitosamente',
-                data: updatedUser,
+                message: 'Comprobante de pago se ha subido exitosamente',
                 success: true
             });
         }

@@ -11,6 +11,7 @@ import * as preRegisterCtrl from '../controllers/preRegister.controllers';
 import { uploadImage } from '../middlewares';
 
 router.get('/', preRegisterCtrl.emailVerification)
+router.get('/allPreRegister', preRegisterCtrl.getAllPreRegister)
 router.get('/emailVerification/:email', preRegisterCtrl.emailVerification)
 router.post('/', preRegisterCtrl.createPreRegister)
 router.put('/:preRegisterId', preRegisterCtrl.updatePreRegisterById)
