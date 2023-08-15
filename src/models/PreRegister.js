@@ -44,6 +44,10 @@ const preRegisterSchema = new Schema({
     },
     fileName: {
         type: String,        
+    },
+    adviser: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, {
     timestamps: true,

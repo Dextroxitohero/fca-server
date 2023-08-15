@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose'
 import bcrypt from 'bcryptjs'
-import { SECRET, JWT_EXPIRES  } from '../config';
 
 
 const userSchema =  new Schema({
@@ -16,6 +15,11 @@ const userSchema =  new Schema({
     },
     password:{
         type: String,
+    },
+    typeUser: {
+        type: String, 
+        enum: ['estudiante','profesor','control escolar', 'administrativo', 'assessor'],
+        require: true
     }
 },{
     timestamps: true,
