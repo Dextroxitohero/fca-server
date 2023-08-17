@@ -1,60 +1,45 @@
 import User from '../models/User';
-import upload from '../multerConfig'
+import upload from '../multerConfig';
 import fs from 'fs';
 
 export const createUser = async (req, res) => {
 	try {
 
-		const { data } = req.body
+		const {
+			firstName,
+			lastName,
+			secondName,
+			email,
+			phone,
+			location,
+			education,
+			dateBirth,
+			typeUser
+		} = req.body
 
-		// console.log(data)
+		const newUser = new User({
+			firstName: firstName?.toLowerCase(),
+			lastName: lastName?.toLowerCase(),
+			secondName: secondName?.toLowerCase(),
+			email: email?.toLowerCase(),
+			phone,
+			location: location?.toLowerCase(),
+			education: education?.toLowerCase(),
+			dateBirth,
+			typeUser: typeUser?.toLowerCase()
+		})
 
-		// const newUser = new User({
-		// 	email: email.toLowerCase(),
-		// })
+		const saveUser = await newUser.save()
 
-		// const saveUser = await newUser.save()
-
-		// if (saveUser === null) {
-		// 	return res.status(500).json({
-		// 		message: 'Server error, try again!'
-		// 	})
-
-		// }
-
-		upload.array('files')(req, res, err => {
-			try {
-				const files = req.files;
-
-				files.forEach(file => {
-					// Obtener la ruta del archivo subido
-					const filePath = `uploads/${file.filename}`;
-
-					// Generar un número aleatorio
-					const randomNumber = Math.floor(Math.random() * 1000);
-					// Obtener el nuevo nombre del archivo utilizando el correo electrónico y el número aleatorio
-					const newFileName = `tiras_lp@hotmail.com-${randomNumber}.${file.originalname.split('.').pop()}`;
-					// Renombrar el archivo
-					fs.rename(filePath, `uploads/${newFileName}`, err => {
-						if (err) {
-							console.error(err);
-						}
-					});
-
-					// Aquí puedes realizar cualquier procesamiento adicional o guardar la referencia en la base de datos
-					// En este ejemplo, simplemente imprimimos el nombre de cada archivo
-					// console.log(newFileName);
-				});
-			} catch (err) {
-				// Manejar el error en caso de que ocurra durante la subida de archivos
-				return res.status(500).json({
-					message: 'Error al subir los archivos',
-				});
-			}
-		});
+		if (saveUser === null) {
+			return res.status(500).json({
+				message: 'Server error, try again!'
+			})
+		}
 
 		return res.status(200).json({
-			message: 'User created successfully'
+			message: 'Usuario creado con exito',
+			data: saveUser
 		})
 
 	} catch (err) {
@@ -67,8 +52,6 @@ export const createUser = async (req, res) => {
 export const getUser = async (req, res) => {
 	try {
 		const user = await User.findById(req.user._id);
-		console.log(user)
-
 		if (!user) {
 			return res.status(400).json({
 				message: "User doesn't exists"

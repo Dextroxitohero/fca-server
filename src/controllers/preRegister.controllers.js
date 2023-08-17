@@ -2,7 +2,6 @@ import { generatePassword } from '../libs/generatePasword';
 import { sendMail } from '../libs/sendMail';
 import PreRegister from '../models/PreRegister';
 import User from '../models/User';
-import { upload } from '../multerConfig';
 
 export const emailVerification = async (req, res) => {
     try {
@@ -154,15 +153,74 @@ export const updatePreRegisterById = async (req, res) => {
 
 export const getAllPreRegister = async (req, res) => {
     try {
+        const preRegisters = await PreRegister.aggregate([
+            {
+                $lookup: {
+                    from: 'users', // Nombre de la colección 'users'
+                    localField: 'assessor',
+                    foreignField: '_id',
+                    as: 'assessorData'
+                }
+            },
+            {
+                $project: {
+                    _id: 0, // Excluimos el campo _id
+                    id: '$_id', // Creamos un nuevo campo id con el valor del campo _id
+                    firstName: 1,
+                    lastName: 1,
+                    email: 1,
+                    phone: 1,
+                    dateBirth: 1,
+                    location: 1,
+                    education: 1,
+                    language: 1,
+                    status: 1,
+                    account: 1,
+                    fileName: 1,
+                    createdAt: 1,
+                    assessorId: { $ifNull: [{ $arrayElemAt: ['$assessorData._id', 0] }, null] },
+                    assessor: {
+                        $cond: {
+                            if: { $gt: [{ $size: '$assessorData' }, 0] },
+                            then: {
+                                $concat: [
+                                    { $ifNull: [{ $arrayElemAt: ['$assessorData.firstName', 0] }, ''] },
+                                    ' ',
+                                    { $ifNull: [{ $arrayElemAt: ['$assessorData.lastName', 0] }, ''] }
+                                ]
+                            },
+                            else: 'sin asesor'
+                        }
+                    }
+                }
+            }
+        ]);
 
-        const preRegisters = await PreRegister.find();
-
-
-        const response = preRegisters.map(item => {
-            const { _id, ...rest } = item._doc;
-            return { id: _id.toString(), ...rest };
+        const response = preRegisters.map(register => {
+            // Crear un objeto Date a partir del campo createdAt
+            const date = new Date(register.createdAt);
+            // Opciones de formato para el objeto DateTimeFormat
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            // Crear un objeto DateTimeFormat con el formato 'es-ES'
+            const formatter = new Intl.DateTimeFormat('es-ES', options);
+            // Formatear la fecha usando el objeto DateTimeFormat
+            const formattedDate = formatter.format(date);
+            // Dividir la fecha formateada en día y mes
+            const [day, month] = formattedDate.split(' de ');
+            // Obtener el año del array de palabras de la fecha formateada
+            const year = formattedDate.split(' ');
+            const yearCut = year[year.length - 1];
+            // Capitalizar la primera letra del mes
+            const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+            // Crear la fecha formateada con el mes en mayúscula y el año al final
+            const formattedDateWithCapitalizedMonth = `${day} de ${capitalizedMonth} ${yearCut}`;
+            // Retornar el registro original con la fecha formateada añadida
+            return {
+                ...register,
+                createdAtFormatted: formattedDateWithCapitalizedMonth
+            };
         });
-        
+
         return res.status(200).json({
             data: response
         });
@@ -176,35 +234,53 @@ export const getAllPreRegister = async (req, res) => {
     }
 }
 
+export const getPreRegisterById = async (req, res) => {
+    try {
+        const { preRegisterId } = req.params;
+
+        const preRegisterFound = await PreRegister.findById(preRegisterId)
+        .populate('assessor', 'firstName lastName');
+
+        if (!preRegisterFound) {
+            return res.status(404).json({
+                message: 'Registro de preinscripción no encontrado'
+            });
+        }
+        
+        return res.status(200).json({
+            data: preRegisterFound
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Error al obtener el registro de preinscripción'
+        });
+    }
+};
+
+
 export const validatePaymentVoucher = async (req, res) => {
     try {
-        const { account, id } = req.body;
+        const { account, id, assessor } = req.body;
         const file = req.file;
-
         const updatedUser = await PreRegister.findByIdAndUpdate(id,
             {
                 account,
                 status: 'validando',
+                assessor: assessor,
                 fileName: file.filename
             },
             {
                 new: true
             }
         )
-
-
-
         // validación del comprobante de pago con los datos recibidos
         if (updatedUser) {
-
 
             await sendMail({
                 email: updatedUser.email,
                 subject: "Validacion de pago",
                 message: `Tu comprobante de pago va ser valido y si todo es exitoso vas recibir un email con tus accesos.`,
             });
-
-
 
             return res.status(200).json({
                 message: 'Comprobante de pago se ha subido exitosamente',
@@ -216,6 +292,7 @@ export const validatePaymentVoucher = async (req, res) => {
         return res.status(404).json({
             message: 'No se encontro el usuario, intente de nuevo',
         });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({

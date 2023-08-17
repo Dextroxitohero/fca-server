@@ -45,7 +45,7 @@ const preRegisterSchema = new Schema({
     fileName: {
         type: String,        
     },
-    adviser: {
+    assessor: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }

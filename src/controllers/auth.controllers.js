@@ -7,44 +7,6 @@ import { sendMail } from '../libs/sendMail';
 import { SECRET } from '../config';
 
 
-// export const signUp = async (req, res) => {
-
-//     try {
-//         const { email, password } = req.body
-//         const newUser = new User({
-//             email: email.toLowerCase(),
-//             password: await User.encryptPassword(password)
-//         })
-
-//         const savedUser = await User.create(newUser)
-
-//         if (!savedUser) {
-//             return res.status(500).json({
-//                 message: 'Server error, try again!!!'
-//             })
-//         }
-//         const activationToken = createActivationToken(user);
-
-//         const token = await createAccessToken(savedUser)
-
-//         console.log(token)
-
-//         return res.status(201).json({
-//             uid: savedUser._id,
-//             name: savedUser.email,
-//             message: 'User created successfully',
-//             token
-//         })
-
-//     } catch (error) {
-
-//         res.status(500).json({
-//             message: "Server error, try again!!!"
-//         })
-//     }
-// }
-
-
 export const signUp = async (req, res) => {
 
     try {

@@ -9,16 +9,31 @@ const userSchema =  new Schema({
     lastName: {
         type: String,
     },
+    secondName: {
+        type: String,
+    },
     email:{
         type: String,
         unique: true
+    },
+    phone:{
+        type: String,
+    },
+    location:{
+        type: String,
+    },
+    education: {
+        type: String,
+    },
+    dateBirth: {
+        type: String,
     },
     password:{
         type: String,
     },
     typeUser: {
         type: String, 
-        enum: ['estudiante','profesor','control escolar', 'administrativo', 'assessor'],
+        enum: ['estudiante','profesor','control escolar', 'administrativo', 'assesor', 'directivo'],
         require: true
     }
 },{

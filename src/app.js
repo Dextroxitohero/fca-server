@@ -9,8 +9,8 @@ import cors from 'cors';
 import usersRoutes from './routes/users.routes';
 import authRoutes from './routes/auth.routes';
 import preRegisterRoutes from './routes/preRegister.routes';
-// import statisticsRoutes from './routes/statitics.routes'
-// import syncRoutes from './routes/sync.routes'
+import optionsRoutes from './routes/options.routes';
+
 
 const app = express()
 
@@ -60,8 +60,7 @@ app.use((req, res, next) => {
 app.use('/users', usersRoutes)
 app.use('/auth', authRoutes)
 app.use('/preRegister', preRegisterRoutes)
-// app.use('/statistics', statisticsRoutes)
-// app.use('/sync', syncRoutes)
+app.use('/options', optionsRoutes)
 
 
 export default app
