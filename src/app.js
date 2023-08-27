@@ -39,8 +39,7 @@ app.get('/', (req, res) => {
 })
 
 // to serve images inside public folder
-app.use(express.static('uploads')); 
-app.use('/images', express.static('images'));
+app.use('/uploads/images', express.static('uploads/images'));
 
 
 // Configure Header HTTP
