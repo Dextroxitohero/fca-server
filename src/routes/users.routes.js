@@ -1,17 +1,17 @@
 import { Router } from 'express';
 
-const router = Router()
+const router = Router();
 
 import * as usersCtrl from '../controllers/users.controllers';
 import { authJwt } from '../middlewares';
 
-router.post('/' ,usersCtrl.createUser)
+router.post('/' ,usersCtrl.createUser);
 router.get('/', 
     [
         authJwt.verifyToken
     ], 
-usersCtrl.getUser)
-router.put('/:userId', usersCtrl.updateUsersById)
-router.delete('/:userId', usersCtrl.deleteUsersById)
+usersCtrl.getUser);
+router.put('/:userId', usersCtrl.updateUsersById);
+router.delete('/:userId', usersCtrl.deleteUsersById);
 
-export default router
+export default router;

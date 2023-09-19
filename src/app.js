@@ -10,6 +10,10 @@ import usersRoutes from './routes/users.routes';
 import authRoutes from './routes/auth.routes';
 import preRegisterRoutes from './routes/preRegister.routes';
 import optionsRoutes from './routes/options.routes';
+import languageRoutes from './routes/language.routes';
+import levelRoutes from './routes/level.routes';
+import colorRoutes from './routes/color.routes';
+import courseRoutes from './routes/course.routes';
 
 
 const app = express()
@@ -56,10 +60,14 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/users', usersRoutes)
-app.use('/auth', authRoutes)
-app.use('/preRegister', preRegisterRoutes)
-app.use('/options', optionsRoutes)
+app.use('/users', usersRoutes);
+app.use('/auth', authRoutes);
+app.use('/preRegister', preRegisterRoutes);
+app.use('/options', optionsRoutes);
+app.use('/language', languageRoutes);
+app.use('/level', levelRoutes);
+app.use('/color', colorRoutes);
+app.use('/course', courseRoutes);
 
 
 export default app
