@@ -30,8 +30,8 @@ export const addColor = async (req, res) => {
 
         const colorSet = {
             name,
-            clase: `bg-${name}-600`,
-            selectedClass: `ring-${name}-600 shadow-${name}-500`
+            clase: `bg-${name}-500`,
+            selectedClass: `ring-${name}-500 shadow-${name}-500`
         }
 
         const newColor = new Color(colorSet);
