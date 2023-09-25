@@ -4,7 +4,7 @@ export const getAllCourses = async (req, res) => {
     try {
         // Buscar todos los cursos en la base de datos
         const courses = await Course.find()
-            .populate('language', 'name')
+            .populate('language', 'name path')
             .populate('level', 'name')
             .populate('color', 'name clase selectedClass');
 

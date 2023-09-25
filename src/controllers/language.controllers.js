@@ -17,7 +17,7 @@ export const getAllLanguages = async (req, res) => {
 
 export const addLanguage = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, path } = req.body;
 
     // Verificar si el idioma ya existe
     const existingLanguage = await Language.findOne({ name });
@@ -27,7 +27,7 @@ export const addLanguage = async (req, res) => {
       });
     }
     // Crear un nuevo idioma
-    const newLanguage = new Language({ name });
+    const newLanguage = new Language({ name, path });
     await newLanguage.save();
 
     return res.status(201).json({
@@ -46,10 +46,10 @@ export const addLanguage = async (req, res) => {
 export const updateLanguage = async (req, res) => {
   try {
     const { languageId } = req.params;
-    const { name } = req.body;
+    const { name, path } = req.body;
 
     // Buscar el idioma por su ID
-    const languageToUpdate = await Language.findByIdAndUpdate(languageId, { name }, { new: true });
+    const languageToUpdate = await Language.findByIdAndUpdate(languageId, { name, path }, { new: true });
 
     if (!languageToUpdate) {
       return res.status(404).json({

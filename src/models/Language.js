@@ -5,6 +5,11 @@ const languageSchema = new Schema({
         type: String,
         unique: true,
         required: true
+    },
+    path: {
+        type: String,
+        unique: true,
+        required: true
     }
 }, {
     timestamps: true,
