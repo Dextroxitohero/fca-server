@@ -90,3 +90,24 @@ export const getAllLanguages = async (req, res) => {
 		});
 	}
 };
+
+export const getAllTeachers = async (req, res) => {
+	try {
+		const users = await User.find();
+		console.log(users)
+		
+		const allUsers = users.map(user => ({
+			value: user._id,
+			description: `${user.firstName} ${user.lastName}`
+		}));
+
+		return res.status(200).json({
+			data: allUsers
+		});
+
+	} catch (error) {
+		return res.status(500).json({
+			message: 'Ocurrio un error, intenta de nuevo'
+		});
+	}
+};

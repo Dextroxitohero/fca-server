@@ -24,7 +24,7 @@ export const getCourseById = async (req, res) => {
 
         // Busca el curso por su ID y poblamos los campos de referencia
         const course = await Course.findById(courseId)
-            .populate('language', 'name')
+            .populate('language', 'name path')
             .populate('level', 'name')
             .populate('color', 'name clase selectedClass');
 
