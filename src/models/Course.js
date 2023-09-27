@@ -23,8 +23,11 @@ const courseSchema = new Schema({
     endDate: {
         type: Date,
     },
-    schedule: {
-        type: String,
+    hours: {
+        type: [],
+    },
+    days: {
+        type: [],
     },
     status: {
         type: String,
