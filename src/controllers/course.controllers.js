@@ -2,11 +2,75 @@ import Course from '../models/Course';
 
 export const getAllCourses = async (req, res) => {
     try {
-        // Buscar todos los cursos en la base de datos
-        const courses = await Course.find()
-            .populate('language', 'name path')
-            .populate('level', 'name')
-            .populate('color', 'name clase selectedClass');
+        const courses = await Course.aggregate([
+            {
+                $lookup: {
+                    from: 'languages',
+                    localField: 'language',
+                    foreignField: '_id',
+                    as: 'language'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'levels',
+                    localField: 'level',
+                    foreignField: '_id',
+                    as: 'level'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'colors',
+                    localField: 'color',
+                    foreignField: '_id',
+                    as: 'color'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'teacher',
+                    foreignField: '_id',
+                    as: 'teacher'
+                }
+            },
+            {
+                $project: {
+                    language: {
+                        $ifNull: [{ $arrayElemAt: ['$language.name', 0] }, '']
+                    },
+                    path: {
+                        $ifNull: [{ $arrayElemAt: ['$language.path', 0] }, '']
+                    },
+                    level: {
+                        $ifNull: [{ $arrayElemAt: ['$level.name', 0] }, '']
+                    },
+                    color: {
+                        $ifNull: [{ $arrayElemAt: ['$color.clase', 0] }, '']
+                    },
+                    teacher: {
+                        $cond: {
+                            if: { $gt: [{ $size: '$teacher' }, 0] },
+                            then: {
+                                $concat: [
+                                    { $ifNull: [{ $arrayElemAt: ['$teacher.firstName', 0] }, ''] },
+                                    ' ',
+                                    { $ifNull: [{ $arrayElemAt: ['$teacher.lastName', 0] }, ''] }
+                                ]
+                            },
+                            else: ''
+                        }
+                    },
+                    limitMembers: { $ifNull: ['$limitMembers', ''] },
+                    startDate: { $ifNull: ['$startDate', ''] },
+                    endDate: { $ifNull: ['$endDate', ''] },
+                    hours: { $ifNull: ['$hours', ''] },
+                    days: { $ifNull: ['$days', ''] },
+                    status: { $ifNull: ['$status', ''] }
+                }
+            }
+        ]);
 
         return res.status(200).json({ courses });
 
@@ -26,7 +90,8 @@ export const getCourseById = async (req, res) => {
         const course = await Course.findById(courseId)
             .populate('language', 'name path')
             .populate('level', 'name')
-            .populate('color', 'name clase selectedClass');
+            .populate('color', 'name clase selectedClass')
+            .populate('teacher', '_id firstName lastName')
 
         if (!course) {
             return res.status(404).json({

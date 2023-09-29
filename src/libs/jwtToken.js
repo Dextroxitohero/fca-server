@@ -16,9 +16,8 @@ export const createCookieAccessAuth = (user, token, statusCode, res) => {
 }
 
 export const createCookieLogout = (res) => {
-
     const options = {
-        expires: new Date(Date.now() + 5 * 1000),
+        expires: new Date(Date.now() + 60 * 60 * 1000),
         httpOnly: true,
         sameSite: "none",
         secure: true,

@@ -77,7 +77,8 @@ export const getAllLanguages = async (req, res) => {
 		
 		const allLanguage = languages.map(language => ({
 			value: language._id,
-			description: language.name
+			description: language.name,
+			path: language.path
 		}));
 
 		return res.status(200).json({
@@ -97,8 +98,8 @@ export const getAllTeachers = async (req, res) => {
 		console.log(users)
 		
 		const allUsers = users.map(user => ({
-			value: user._id,
-			description: `${user.firstName} ${user.lastName}`
+			_id: user._id,
+			name: `${user.firstName} ${user.lastName}`
 		}));
 
 		return res.status(200).json({
