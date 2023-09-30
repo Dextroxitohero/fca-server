@@ -21,7 +21,7 @@ export const createActivationToken = async ({ _id, email, password }) => {
         password
     }
     const token = jwt.sign(payLoad, SECRET, {
-        expiresIn: '1h'
+        expiresIn: '24h'
     })
 
     return token
