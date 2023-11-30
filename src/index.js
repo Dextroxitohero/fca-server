@@ -2,6 +2,6 @@ import app from './app';
 import './db'
 import { PORT } from './config';
 
-app.listen(PORT)
+app.listen(PORT);
 
-console.log('Server on port', PORT)
+console.log('Server on port', PORT);
