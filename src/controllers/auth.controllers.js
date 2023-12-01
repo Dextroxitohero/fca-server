@@ -8,8 +8,8 @@ import { SECRET } from '../config';
 
 
 export const signUp = async (req, res) => {
-
     try {
+        console.log(req.body)
         const { email, password } = req.body
 
         const newUser = {
@@ -84,7 +84,6 @@ export const activation = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-
         const userFound = await User.findOne({
             email: req.body.email
         })
