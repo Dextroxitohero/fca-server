@@ -4,7 +4,8 @@ import morgan from 'morgan';
 import pkg from '../package.json';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-
+// import { logger } from './middlewares'
+import { logger } from './middlewares/logEvents'
 
 import usersRoutes from './routes/users.routes';
 import authRoutes from './routes/auth.routes';
@@ -17,6 +18,11 @@ import courseRoutes from './routes/course.routes';
 
 
 const app = express()
+
+
+// custom middleware logger
+app.use(logger);
+
 
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 
