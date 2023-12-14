@@ -14,6 +14,17 @@ export const createAccessToken = async ({ _id, email, password }) => {
     return token
 }
 
+export const createAccessTokenForgotPasswordEmail = async (email) => {
+    const payLoad = {
+        email,
+    }
+    const token = jwt.sign(payLoad, SECRET, {
+        expiresIn: JWT_EXPIRES
+    })
+
+    return token
+}
+
 export const createActivationToken = async ({ _id, email, password }) => {
     const payLoad = {
         _id,

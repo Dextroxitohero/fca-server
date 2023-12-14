@@ -15,6 +15,8 @@ import languageRoutes from './routes/language.routes';
 import levelRoutes from './routes/level.routes';
 import colorRoutes from './routes/color.routes';
 import courseRoutes from './routes/course.routes';
+import refreshTokenRoutes from './routes/refreshToken.routes';
+// import { credentials } from './middlewares/credentials';
 
 
 const app = express()
@@ -23,7 +25,7 @@ const app = express()
 // custom middleware logger
 app.use(logger);
 
-
+// app.use(credentials)
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 
 app.use(express.json({
@@ -75,6 +77,7 @@ app.use('/language', languageRoutes);
 app.use('/level', levelRoutes);
 app.use('/color', colorRoutes);
 app.use('/course', courseRoutes);
+app.use('/refresh-token', refreshTokenRoutes);
 
 
 export default app

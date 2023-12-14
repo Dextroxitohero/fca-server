@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 import bcrypt from 'bcryptjs'
 
 
-const userSchema =  new Schema({
+const userSchema = new Schema({
     firstName: {
         type: String,
     },
@@ -12,14 +12,14 @@ const userSchema =  new Schema({
     secondName: {
         type: String,
     },
-    email:{
+    email: {
         type: String,
         unique: true
     },
-    phone:{
+    phone: {
         type: String,
     },
-    location:{
+    location: {
         type: String,
     },
     education: {
@@ -28,15 +28,24 @@ const userSchema =  new Schema({
     dateBirth: {
         type: String,
     },
-    password:{
+    password: {
         type: String,
     },
+    roles: {
+        User: {
+            type: Number,
+            default: 2001
+        },
+        Editor: Number,
+        Admin: Number
+    },
     typeUser: {
-        type: String, 
-        enum: ['estudiante','profesor','control escolar', 'administrativo', 'assesor', 'directivo'],
+        type: String,
+        enum: ['estudiante', 'profesor', 'control escolar', 'administrativo', 'assesor', 'directivo'],
         require: true
-    }
-},{
+    },
+    refreshToken: [String]
+}, {
     timestamps: true,
     versionKey: false
 })
@@ -47,7 +56,7 @@ userSchema.statics.encryptPassword = async (password) => {
 }
 
 userSchema.statics.comparePassword = async (password, recivedPassword) => {
-    return await bcrypt.compare(password,recivedPassword)
+    return await bcrypt.compare(password, recivedPassword)
 }
 
 export default model('User', userSchema)

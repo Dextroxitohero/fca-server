@@ -1,5 +1,5 @@
-import { Router } from 'express'
-const router = Router()
+import { Router } from 'express';
+const router = Router();
 
 import * as authCtrl from '../controllers/auth.controllers'
 import { verifySignUp, authJwt } from '../middlewares'
@@ -12,20 +12,15 @@ router.post('/signup',
     ],
     authCtrl.signUp
 )
-router.post('/activation',
-    authCtrl.activation
-)
+router.post('/forgot-password-email', authCtrl.forgotPasswordEmail);
 
-router.post('/login',
-    [
-        verifySignUp.existsEmail
-    ],
-    authCtrl.login
-)
+router.put('/update-password', authCtrl.updatedPassword);
 
-router.get('/logout',
-    authCtrl.logout
-)
+router.post('/activation', authCtrl.activation)
+
+router.post('/login', authCtrl.login)
+
+router.get('/logout', authCtrl.logout)
 
 router.get('/refreshAccessToken',
     [
@@ -33,6 +28,7 @@ router.get('/refreshAccessToken',
     ],
     authCtrl.refreshAccessToken
 )
+router.get('/refresh-token', authCtrl.refreshToken)
 
 
 export default router
