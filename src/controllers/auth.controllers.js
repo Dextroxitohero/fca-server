@@ -40,9 +40,8 @@ export const signUp = async (req, res) => {
 }
 
 export const forgotPasswordEmail = async (req, res) => {
-    const { email } = req.body;
-
     try {
+        const { email } = req.body;
 
         const foundUser = await User.findOne({ email });
 
