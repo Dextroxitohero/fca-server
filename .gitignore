@@ -1,8 +1,11 @@
 #node
 node_modules
 
+#build
+build
+
 #Logs
-src/logs
+logs
 
 #environment variables
 .env

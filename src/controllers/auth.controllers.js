@@ -4,8 +4,7 @@ import jwt from 'jsonwebtoken';
 import { createActivationToken, createAccessTokenForgotPasswordEmail } from '../libs/creationWebToken';
 import { createCookieAccessAuth, createCookieLogout } from '../libs/jwtToken';
 import { sendMail } from '../libs/sendMail';
-import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../config';
-
+import { BASE_URL_DEV, BASE_URL_PRODUCTION } from '../config'
 
 export const signUp = async (req, res) => {
     try {
@@ -18,7 +17,7 @@ export const signUp = async (req, res) => {
 
         const activationToken = await createActivationToken(newUser);
 
-        const activationUrl = `http://localhost:3000/activation/${activationToken}`;
+        const activationUrl = `${BASE_URL_PRODUCTION}${activationToken}`;
 
         await sendMail({
             email: newUser.email,
@@ -53,7 +52,7 @@ export const forgotPasswordEmail = async (req, res) => {
 
         const token = await createAccessTokenForgotPasswordEmail(email)
 
-        const changePassword = `http://localhost:3000/forget-password/${token}`;
+        const changePassword = `${BASE_URL_PRODUCTION}/forget-password/${token}`;
 
         await sendMail({
             email: email,
