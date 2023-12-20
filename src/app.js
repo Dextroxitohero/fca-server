@@ -26,7 +26,7 @@ const app = express()
 app.use(logger);
 
 // app.use(credentials)
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+app.use(cors({credentials: true, origin: 'https://control-escolar.cfamex.com'}));
 
 app.use(express.json({
 	limit: "50mb",
