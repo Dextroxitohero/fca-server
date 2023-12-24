@@ -19,7 +19,7 @@ import courseRoutes from './routes/course.routes';
 import refreshTokenRoutes from './routes/refreshToken.routes';
 // import { credentials } from './middlewares/credentials';
 
-const buildPath = path.join(__dirname, 'app/build');
+const buildPath = path.join(__dirname, '');
 
 console.log(buildPath)
 
