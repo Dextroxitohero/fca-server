@@ -31,7 +31,8 @@ app.use(logger);
 
 // app.use(credentials)
 // app.use(cors({credentials: true, origin: 'https://control-escolar.cfamex.com'}));
-app.use(cors({ credentials: true, origin: 'http://localhost:8000/login' }));
+app.use(cors({credentials: true, origin: 'https://fca-client-production.up.railway.app'}));
+// app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 
 app.use(express.json({
 	limit: "50mb",
