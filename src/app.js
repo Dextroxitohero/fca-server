@@ -59,9 +59,9 @@ app.use('/uploads/flags', express.static('uploads/flags'));
 
 // app.use('../build', express.static('../build'));
 
-app.use(express.static(path.join(__dirname, '/control-escolar/build')));
+app.use(express.static(path.join(__dirname, '/build')));
 app.get('*', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '/control-escolar/build', 'index.html'));
+	res.sendFile(path.resolve(__dirname, '/build', 'build/index.html'));
 });
 
 
