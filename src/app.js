@@ -19,7 +19,7 @@ import courseRoutes from './routes/course.routes';
 import refreshTokenRoutes from './routes/refreshToken.routes';
 // import { credentials } from './middlewares/credentials';
 
-const buildPath = path.join(__dirname, 'app/build');
+const buildPath = path.join(__dirname, './');
 
 console.log(buildPath)
 
@@ -60,11 +60,9 @@ app.use('/uploads/images', express.static('uploads/images'));
 app.use('/uploads/flags', express.static('uploads/flags'));
 
 
-// app.use(express.static(buildPath))
+app.use(express.static(buildPath))
 app.get('*', (req, res) => {
-	res.sendFile('./app/build/index.html', { root: __dirname })
-	// res.sendFile('../app/build/index.html', { root: __dirname })
-	// res.sendFile(path.join(buildPath, 'index.html'))
+	res.sendFile(path.join(buildPath, 'index.html'))
 })
 
 // Configure Header HTTP
