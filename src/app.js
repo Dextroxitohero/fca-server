@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import bodyParser from "body-parser";
 import morgan from 'morgan';
 import pkg from '../package.json';
@@ -26,7 +27,8 @@ const app = express()
 app.use(logger);
 
 // app.use(credentials)
-app.use(cors({credentials: true, origin: 'https://control-escolar.cfamex.com'}));
+// app.use(cors({credentials: true, origin: 'https://control-escolar.cfamex.com'}));
+app.use(cors({credentials: true, origin: 'http://localhost:8000/login'}));
 
 app.use(express.json({
 	limit: "50mb",
@@ -41,18 +43,26 @@ app.use(morgan('dev'))
 
 app.set('pkg', pkg)
 
-app.get('/', (req, res) => {
-	res.json({
-		name: app.get('pkg').name,
-		author: app.get('pkg').author,
-		description: app.get('pkg').description,
-		version: app.get('pkg').version
-	})
-})
+// app.get('/', (req, res) => {
+// 	res.json({
+// 		name: app.get('pkg').name,
+// 		author: app.get('pkg').author,
+// 		description: app.get('pkg').description,
+// 		version: app.get('pkg').version
+// 	})
+// })
 
 // to serve images inside public folder
 app.use('/uploads/images', express.static('uploads/images'));
 app.use('/uploads/flags', express.static('uploads/flags'));
+
+
+app.use(express.static(path.join(__dirname, '../build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+});
+
 
 
 // Configure Header HTTP
