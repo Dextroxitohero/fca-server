@@ -19,9 +19,7 @@ import courseRoutes from './routes/course.routes';
 import refreshTokenRoutes from './routes/refreshToken.routes';
 // import { credentials } from './middlewares/credentials';
 
-const buildPath = path.join(__dirname, './');
 
-console.log(buildPath)
 
 const app = express()
 
@@ -47,24 +45,19 @@ app.use(morgan('dev'))
 
 app.set('pkg', pkg)
 
-// app.get('/', (req, res) => {
-// 	res.json({
-// 		name: app.get('pkg').name,
-// 		author: app.get('pkg').author,
-// 		description: app.get('pkg').description,
-// 		version: app.get('pkg').version
-// 	})
-// })
+app.get('/', (req, res) => {
+	res.json({
+		name: app.get('pkg').name,
+		author: app.get('pkg').author,
+		description: app.get('pkg').description,
+		version: app.get('pkg').version
+	})
+})
 
 // to serve images inside public folder
 app.use('/uploads/images', express.static('uploads/images'));
 app.use('/uploads/flags', express.static('uploads/flags'));
 
-
-app.use(express.static(buildPath))
-app.get('*', (req, res) => {
-	res.sendFile(path.join(buildPath, 'index.html'))
-})
 
 // Configure Header HTTP
 app.use((req, res, next) => {
