@@ -58,11 +58,11 @@ app.use('/uploads/flags', express.static('uploads/flags'));
 
 
 
-app.use(express.static(path.join(__dirname, '../build')));
+app.use(express.static(path.join(__dirname, '/control-escolar/build')));
 app.get('*', (req, res) => {
-	const rutaRelativa = path.join(__dirname, '../build', 'index.html');
-	console.log(rutaRelativa)
-	res.sendFile(path.resolve(__dirname, '../build', 'index.html'));
+	// const rutaRelativa = path.join(__dirname, '../build', 'index.html');
+	// console.log(rutaRelativa)
+	res.sendFile(path.resolve(__dirname, '/control-escolar/build', 'index.html'));
 });
 
 // Configure Header HTTP
