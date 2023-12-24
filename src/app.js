@@ -57,14 +57,13 @@ app.use('/uploads/images', express.static('uploads/images'));
 app.use('/uploads/flags', express.static('uploads/flags'));
 
 
-// app.use('../build', express.static('../build'));
 
-app.use(express.static(path.join(__dirname, '/build')));
+app.use(express.static(path.join(__dirname, '../build')));
 app.get('*', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '/build', 'build/index.html'));
+	const rutaRelativa = path.join(__dirname, '../build', 'index.html');
+	console.log(rutaRelativa)
+	res.sendFile(path.resolve(__dirname, '../build', 'index.html'));
 });
-
-
 
 // Configure Header HTTP
 app.use((req, res, next) => {
