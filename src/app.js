@@ -19,6 +19,7 @@ import courseRoutes from './routes/course.routes';
 import refreshTokenRoutes from './routes/refreshToken.routes';
 // import { credentials } from './middlewares/credentials';
 
+const buildPath = path.join(__dirname, 'build');
 
 const app = express()
 
@@ -28,7 +29,7 @@ app.use(logger);
 
 // app.use(credentials)
 // app.use(cors({credentials: true, origin: 'https://control-escolar.cfamex.com'}));
-app.use(cors({credentials: true, origin: 'http://localhost:8000/login'}));
+app.use(cors({ credentials: true, origin: 'http://localhost:8000/login' }));
 
 app.use(express.json({
 	limit: "50mb",
@@ -57,13 +58,10 @@ app.use('/uploads/images', express.static('uploads/images'));
 app.use('/uploads/flags', express.static('uploads/flags'));
 
 
-
-app.use(express.static(path.join(__dirname, '/control-escolar/build')));
+app.use(express.static(buildPath))
 app.get('*', (req, res) => {
-	// const rutaRelativa = path.join(__dirname, '../build', 'index.html');
-	// console.log(rutaRelativa)
-	res.sendFile(path.resolve(__dirname, '/control-escolar/build', 'index.html'));
-});
+	res.sendFile(path.join(buildPath, 'index.html'))
+})
 
 // Configure Header HTTP
 app.use((req, res, next) => {

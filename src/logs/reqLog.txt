@@ -212,3 +212,10 @@
 20231224	01:38:10	24a869fc-3e70-4313-9190-264a60ae449f	GET	undefined	/manifest.json
 20231224	01:38:10	bd99ed37-635f-4397-8f54-56e7f2b52396	GET	undefined	/favicon.ico
 20231224	01:38:10	c100363b-943e-4d0f-9ba5-a7f27132fe97	GET	undefined	/logo192.png
+20231224	01:46:48	5f85f50f-421b-4443-b860-14010cea9be1	GET	undefined	/
+20231224	01:46:48	170b422f-285e-4431-8f25-06bf95dd944a	GET	undefined	/static/css/main.25d5bb8c.css
+20231224	01:46:48	889e5f93-50d7-44ce-a046-1e9093d51831	GET	undefined	/static/js/main.2ab714e6.js
+20231224	01:46:48	3ceb57cf-6890-4376-8ea0-84fe552aa3e9	GET	undefined	/static/media/logo.630a7ab6ad37f69cc2fd.png
+20231224	01:46:48	3ec35eb0-5ddf-4728-b724-a301bb70a20c	GET	undefined	/static/media/5.57758a82d0fe35135121.png
+20231224	01:46:48	8bf51456-3271-4b24-a86e-857f1d624afd	GET	undefined	/manifest.json
+20231224	01:46:48	8f9c3c8e-ea3e-4a33-9ad4-291c7e4c40c2	GET	undefined	/logo192.png
