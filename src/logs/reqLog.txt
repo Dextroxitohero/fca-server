@@ -219,3 +219,10 @@
 20231224	01:46:48	3ec35eb0-5ddf-4728-b724-a301bb70a20c	GET	undefined	/static/media/5.57758a82d0fe35135121.png
 20231224	01:46:48	8bf51456-3271-4b24-a86e-857f1d624afd	GET	undefined	/manifest.json
 20231224	01:46:48	8f9c3c8e-ea3e-4a33-9ad4-291c7e4c40c2	GET	undefined	/logo192.png
+20231224	01:53:54	ccb55f37-f51e-495c-993e-05de066486fb	GET	undefined	/
+20231224	01:53:54	fbc408bb-20c6-4073-9cb8-a57d69336bdb	GET	undefined	/static/css/main.25d5bb8c.css
+20231224	01:53:54	0f674f06-ca1e-49ba-b1dc-70072892c687	GET	undefined	/static/js/main.2ab714e6.js
+20231224	01:53:54	947862f9-a215-4a13-b538-de46e66f8e35	GET	undefined	/static/media/logo.630a7ab6ad37f69cc2fd.png
+20231224	01:53:54	cf50d092-94c4-4a68-8b75-fe559795eb65	GET	undefined	/static/media/5.57758a82d0fe35135121.png
+20231224	01:53:54	d0c3409e-ba99-4916-85d7-b6f9c2a90330	GET	undefined	/manifest.json
+20231224	01:53:54	d68272ca-592c-4f35-95b5-6d7592cdcd88	GET	undefined	/logo192.png
