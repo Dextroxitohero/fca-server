@@ -60,9 +60,11 @@ app.use('/uploads/images', express.static('uploads/images'));
 app.use('/uploads/flags', express.static('uploads/flags'));
 
 
-app.use(express.static(buildPath))
+// app.use(express.static(buildPath))
 app.get('*', (req, res) => {
-	res.sendFile(path.join(buildPath, 'index.html'))
+	res.sendFile('./app/build/index.html', { root: __dirname })
+	// res.sendFile('../app/build/index.html', { root: __dirname })
+	// res.sendFile(path.join(buildPath, 'index.html'))
 })
 
 // Configure Header HTTP
