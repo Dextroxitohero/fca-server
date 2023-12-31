@@ -432,6 +432,7 @@ export const login = async (req, res) => {
 
 
 export const refreshToken = async (req, res) => {
+    console.log('refresh----Token')
     const cookies = req.cookies;
     const refreshToken = cookies.jwt;
     console.log(refreshToken)
