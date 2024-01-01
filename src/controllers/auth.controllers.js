@@ -60,7 +60,7 @@ export const forgotPasswordEmail = async (req, res) => {
             message: `Para generar una nueva contrasena del correo electronico ${email}, da click en el siguiente enlace: ${changePassword}`,
         });
 
-        return res.status(201).json({
+        return res.status(200).json({
             success: true,
             message: `Por favor revisa tu correo electronico:- ${email} para recuperar tu contrasena!`,
         })
@@ -96,7 +96,7 @@ export const updatedPassword = async (req, res) => {
             message: `Tu contraseña se actualizo correctamente. Tu nueva es: ${password} `,
         });
 
-        return res.status(201).json({
+        return res.status(200).json({
             success: true,
             message: `La contraseña se actualizo correctamente`,
         })
@@ -432,10 +432,8 @@ export const login = async (req, res) => {
 
 
 export const refreshToken = async (req, res) => {
-    console.log('refresh----Token')
     const cookies = req.cookies;
     const refreshToken = cookies.jwt;
-    console.log(refreshToken)
     // Validar que se proporcione un refresh token
     if (!refreshToken) {
         return res.status(401).json({ error: 'Refresh token not provided' });
@@ -480,7 +478,6 @@ export const refreshToken = async (req, res) => {
         // Enviar la respuesta con el nuevo token de acceso y cualquier otra información necesaria
         res.json({ user: foundUser ,accessToken, roles });
     } catch (error) {
-        console.error(error);
         res.status(401).json({ error: 'Invalid refresh token' });
     }
 };

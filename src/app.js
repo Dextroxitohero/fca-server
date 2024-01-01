@@ -1,11 +1,8 @@
 import express from 'express';
-import path from 'path';
-import bodyParser from "body-parser";
 import morgan from 'morgan';
 import pkg from '../package.json';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-// import { logger } from './middlewares'
 import { logger } from './middlewares/logEvents'
 
 import usersRoutes from './routes/users.routes';
@@ -17,7 +14,9 @@ import levelRoutes from './routes/level.routes';
 import colorRoutes from './routes/color.routes';
 import courseRoutes from './routes/course.routes';
 import refreshTokenRoutes from './routes/refreshToken.routes';
-// import { credentials } from './middlewares/credentials';
+
+
+import { BASE_URL_DEV, BASE_URL_PRODUCTION } from './config';
 
 
 
@@ -27,10 +26,8 @@ const app = express()
 // custom middleware logger
 app.use(logger);
 
-// app.use(credentials)
-// app.use(cors({credentials: true, origin: 'https://control-escolar.cfamex.com'}));
-app.use(cors({credentials: true, origin: 'https://fca-client-production.up.railway.app'}));
-// app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors({credentials: true, origin: BASE_URL_DEV }));
+// app.use(cors({credentials: true, origin: BASE_URL_PRODUCTION }));
 
 app.use(express.json({
 	limit: "50mb",

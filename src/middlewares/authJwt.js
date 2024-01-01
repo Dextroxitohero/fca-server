@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { SECRET,  } from '../config';
+import { SECRET  } from '../config';
 import User from '../models/User';
 
 
