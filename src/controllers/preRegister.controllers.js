@@ -12,13 +12,14 @@ export const emailVerification = async (req, res) => {
         const foundUser = await User.findOne({ email })
 
         if (foundUser) {
-            return res.status(200).json({
-                message: 'El usuario ya se encuentra disponible',
+            return res.status(409).json({
+                message: 'El correo electronico ya se ha registrado.',
                 emailExist: false
             })
         }
 
-        const foundUserPreRegister = await PreRegister.findOne({ email })
+        const foundUserPreRegister = await PreRegister.findOne({ email });
+
         if (foundUserPreRegister) {
             return res.status(200).json({
                 emailExist: true,

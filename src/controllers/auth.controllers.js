@@ -46,7 +46,7 @@ export const forgotPasswordEmail = async (req, res) => {
 
         if (!foundUser) {
             return res.status(400).json({
-                message: "El email no esta registrado"
+                message: "El correo electronico no esta registrado"
             })
         }
 
