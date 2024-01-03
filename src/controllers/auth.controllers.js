@@ -376,12 +376,16 @@ export const login = async (req, res) => {
 
     // Validar que se proporcionen email y password
     if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
+        return res.status(400).json({ message: 'Email and password are required' });
     }
 
     try {
         // Buscar al usuario por email en la base de datos
         const foundUser = await User.findOne({ email }).exec();
+
+        if(!foundUser) return res.status(404).json({ 
+            message: 'El usuario no existe' 
+        });
 
         // Validar que el usuario exista y la contraseña sea correcta
         // if (!user || !bcrypt.compareSync(password, user.password)) {
@@ -390,7 +394,7 @@ export const login = async (req, res) => {
 
         const matchPassword = await User.comparePassword(password, foundUser.password)
         if (!matchPassword)
-            return res.status(203).json({
+            return res.status(401).json({
                 message: 'La contraseña es incorrecta'
             })
 
