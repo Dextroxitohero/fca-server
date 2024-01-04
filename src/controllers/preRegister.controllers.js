@@ -195,7 +195,7 @@ export const getAllPreRegister = async (req, res) => {
                     }
                 }
             }
-        ]);
+        ]).sort({ createdAt: -1 });;
 
         const response = preRegisters.map(register => {
             // Crear un objeto Date a partir del campo createdAt
@@ -295,7 +295,6 @@ export const validatePaymentVoucher = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
         return res.status(500).json({
             message: 'Hubo un error al validar el comprobante de pago'
         });

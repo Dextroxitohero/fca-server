@@ -70,23 +70,42 @@ export const getUser = async (req, res) => {
 	}
 }
 
-export const getAllUser = async (req, res) => {
+export const getAllUsers = async (req, res) => {
 	try {
+		const users = await User.find({ typeUser: { $ne: 'estudiante' } },
+			'-password -password -phone -location -education -dateBirth -refreshToken -updatedAt'
+		).sort({ createdAt: -1 });
 
-		const user = await User.find()
+		const usersFormmated = users.map(user => {
+			const date = new Date(user.createdAt);
+			const options = { day: 'numeric', month: 'long', year: 'numeric' };
+			const formatter = new Intl.DateTimeFormat('es-ES', options);
+			const formattedDate = formatter.format(date);
+			const [day, month] = formattedDate.split(' de ');
+			const year = formattedDate.split(' ');
+			const yearCut = year[year.length - 1];
+			const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+			const formattedDateWithCapitalizedMonth = `${day} de ${capitalizedMonth} ${yearCut}`;
+
+			const { _id, ...userWithoutId } = user._doc;
+			return {
+                id: _id,
+                ...userWithoutId,
+				createdAtFormatted: formattedDateWithCapitalizedMonth
+			};
+		});
 
 		return res.status(200).json({
-			data: user
-		})
+			users: usersFormmated
+		});
 
 	} catch (error) {
-
 		return res.status(500).json({
-			message: 'Error Server'
-		})
-
+			message: 'Error al obtener la información de los usuarios'
+		});
 	}
-}
+};
+
 
 export const updateUsersById = async (req, res) => {
 	try {

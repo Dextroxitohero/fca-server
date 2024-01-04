@@ -95,7 +95,6 @@ export const getAllLanguages = async (req, res) => {
 export const getAllTeachers = async (req, res) => {
 	try {
 		const users = await User.find();
-		console.log(users)
 		
 		const allUsers = users.map(user => ({
 			_id: user._id,

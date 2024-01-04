@@ -2,14 +2,12 @@ import User from '../models/User';
 import jwt from 'jsonwebtoken';
 
 export const refreshToken = async (req, res) => {
-    console.log(req.cookies)
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.sendStatus(401);
     const refreshToken = cookies.jwt;
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
 
     const foundUser = await User.findOne({ refreshToken }).exec();
-    console.log(foundUser)
     // Detected refresh token reuse!
     if (!foundUser) {
         jwt.verify(

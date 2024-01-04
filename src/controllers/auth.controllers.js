@@ -446,7 +446,6 @@ export const refreshToken = async (req, res) => {
     try {
         // Verificar el refresh token
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-        console.log(decoded.email)
         // Buscar al usuario por username en la base de datos
         const foundUser = await User.findOne({ email: decoded.email }).exec();
 

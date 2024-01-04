@@ -44,7 +44,6 @@ const userSchema = new Schema({
         enum: ['estudiante', 'profesor', 'control escolar', 'administrativo', 'assesor', 'directivo'],
         require: true
     },
-    refreshToken: [String]
 }, {
     timestamps: true,
     versionKey: false

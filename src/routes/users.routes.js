@@ -5,8 +5,8 @@ const router = Router();
 import * as usersCtrl from '../controllers/users.controllers';
 import { authJwt } from '../middlewares';
 
+router.get('/getAllUsers',usersCtrl.getAllUsers);
 router.post('/' ,usersCtrl.createUser);
-router.get('/',usersCtrl.getAllUser);
 // router.get('/', 
 //     [
 //         authJwt.verifyToken

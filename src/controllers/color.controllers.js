@@ -17,7 +17,6 @@ export const getAllColors = async (req, res) => {
 export const addColor = async (req, res) => {
     try {
         const { name } = req.body;
-        console.log(name)
 
         // Verificar si el level ya existe
         const existingColor = await Color.findOne({ name });
