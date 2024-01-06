@@ -89,7 +89,7 @@ export const createPreRegister = async (req, res) => {
         await sendMail({
             email: newPreRegister.email,
             subject: "Datos de pago",
-            message: `Te dejamos nuestros canal de pagos. Cuando realices tu pago puedes subir tu comprobante aqui con tu correo electronico con el que te registrastes. http://localhost:3000/pre-registro`,
+            message: `Te dejamos nuestros canal de pagos. Cuando realices tu pago puedes subir tu comprobante aqui con tu correo electronico con el que te registrastes. https://fca-client-production.up.railway.app/pre-registro`,
         });
 
         return res.status(201).json({
