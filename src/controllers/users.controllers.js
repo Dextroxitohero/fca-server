@@ -1,6 +1,9 @@
 import User from '../models/User';
-import upload from '../multerConfig';
-import fs from 'fs';
+import PreRegister from '../models/PreRegister';
+
+import { BASE_URL_DEV, BASE_URL_PRODUCTION } from '../config'
+import { createActivationToken } from '../libs/creationWebToken';
+import { sendMail } from '../libs/sendMail';
 
 export const createUser = async (req, res) => {
 	try {
@@ -43,6 +46,7 @@ export const createUser = async (req, res) => {
 		})
 
 	} catch (err) {
+		// console.log(err)
 		return res.status(500).json({
 			message: 'Ocurrio un error, intenta de nuevo'
 		})
@@ -89,8 +93,8 @@ export const getAllUsers = async (req, res) => {
 
 			const { _id, ...userWithoutId } = user._doc;
 			return {
-                id: _id,
-                ...userWithoutId,
+				id: _id,
+				...userWithoutId,
 				createdAtFormatted: formattedDateWithCapitalizedMonth
 			};
 		});
@@ -156,3 +160,51 @@ export const deleteUsersById = async (req, res) => {
 
 	}
 }
+
+export const createUserByInvitation = async (req, res) => {
+	try {
+		const { email, typeUser } = req.body;
+
+		const foundUser = await User.findOne({ email })
+		if (foundUser) {
+			return res.status(409).json({
+				message: 'El usuario ya se encuentra en el sistema',
+				success: false
+			})
+		}
+
+		const foundUserPreRegister = await PreRegister.findOne({ email })
+
+		if (foundUserPreRegister) {
+			return res.status(409).json({
+				message: 'El usuario esta en proceso de pre registro.',
+				success: false
+			})
+		}
+
+		const newUser = { email, typeUser }
+
+		const token = await createActivationToken(newUser);
+
+		const activationUrl = `${BASE_URL_PRODUCTION}/nuevo-usuario/${token}`;
+
+		await sendMail({
+			email: email,
+			subject: "Invitacion nuevo usuario",
+			message: `Hola, para continuar con el proceso de registro, por favor ingresa al siguiente enlace: ${activationUrl}`,
+		});
+
+		return res.status(201).json({
+			message: `Envio un correo electronico: ${email}, con un enlace para activar tu cuenta.`,
+			success: true
+		})
+
+	} catch (error) {
+		return res.status(500).json({
+			message: 'Error ',
+			success: false
+		})
+	}
+}
+
+

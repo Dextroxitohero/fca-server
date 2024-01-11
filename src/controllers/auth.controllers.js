@@ -8,7 +8,7 @@ import { BASE_URL_DEV, BASE_URL_PRODUCTION } from '../config'
 
 export const signUp = async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body;
 
         const newUser = {
             email: email.toLowerCase(),
@@ -17,7 +17,7 @@ export const signUp = async (req, res) => {
 
         const activationToken = await createActivationToken(newUser);
 
-        const activationUrl = `${BASE_URL_PRODUCTION}${activationToken}`;
+        const activationUrl = `${BASE_URL_PRODUCTION}/${activationToken}`;
 
         await sendMail({
             email: newUser.email,
@@ -463,14 +463,14 @@ export const refreshToken = async (req, res) => {
                 }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '120s' }
+            { expiresIn: '2h' }
         );
 
         // Generar un nuevo refresh token
         const newRefreshToken = jwt.sign(
             { "email": foundUser.email },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: '180s' }
+            { expiresIn: '2h' }
         );
 
         // Configurar la cookie con el nuevo refresh token

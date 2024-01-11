@@ -7,6 +7,7 @@ import { authJwt } from '../middlewares';
 
 router.get('/getAllUsers',usersCtrl.getAllUsers);
 router.post('/' ,usersCtrl.createUser);
+router.post('/newUserByInvitation', usersCtrl.createUserByInvitation);
 // router.get('/', 
 //     [
 //         authJwt.verifyToken

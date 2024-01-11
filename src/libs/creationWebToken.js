@@ -25,11 +25,10 @@ export const createAccessTokenForgotPasswordEmail = async (email) => {
     return token
 }
 
-export const createActivationToken = async ({ _id, email, password }) => {
+export const createActivationToken = async ({ email, typeUser }) => {
     const payLoad = {
-        _id,
         email,
-        password
+        typeUser
     }
     const token = jwt.sign(payLoad, SECRET, {
         expiresIn: '24h'
