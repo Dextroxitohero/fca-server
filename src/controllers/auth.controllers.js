@@ -382,7 +382,6 @@ export const login = async (req, res) => {
     try {
         // Buscar al usuario por email en la base de datos
         const foundUser = await User.findOne({ email }).exec();
-
         if(!foundUser) return res.status(404).json({ 
             message: 'El usuario no existe' 
         });
@@ -410,6 +409,8 @@ export const login = async (req, res) => {
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '120s' }
         );
+
+        console.log(accessToken)
 
         // Generar un refresh token
         const refreshToken = jwt.sign(

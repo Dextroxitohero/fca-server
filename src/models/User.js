@@ -35,9 +35,16 @@ const userSchema = new Schema({
     password: {
         type: String,
     },
+    roles: {
+        User: {
+            type: Number,
+            default: 2001
+        },
+        Admin: Number
+    },
     typeUser: {
         type: String,
-        enum: ['estudiante', 'profesor', 'control escolar', 'administrativo', 'director', 'subdirector', 'coordinador', 'ventas', 'cobranza','invitado'],
+        enum: ['estudiante', 'profesor', 'control escolar', 'administrativo', 'desarrollador' ,'director', 'subdirector', 'coordinador', 'ventas', 'cobranza','invitado'],
         require: true
     },
 }, {
