@@ -10,27 +10,38 @@ export const createUser = async (req, res) => {
 
 		const {
 			firstName,
-			lastName,
 			secondName,
+			lastName,
+			secondSurname,
 			email,
-			phone,
 			location,
-			education,
+			typeUser,
+			phone,
 			dateBirth,
-			typeUser
+			password
 		} = req.body
 
 		const newUser = new User({
 			firstName: firstName?.toLowerCase(),
-			lastName: lastName?.toLowerCase(),
 			secondName: secondName?.toLowerCase(),
-			email: email?.toLowerCase(),
+			lastName: lastName?.toLowerCase(),
+			secondSurname: secondSurname?.toLowerCase(),
+			email: email,
 			phone,
 			location: location?.toLowerCase(),
-			education: education?.toLowerCase(),
+			typeUser: typeUser?.toLowerCase(),
 			dateBirth,
-			typeUser: typeUser?.toLowerCase()
+			password: await User.encryptPassword(password)
 		})
+
+		const foundUser = await User.findOne({ email })
+
+
+		if(foundUser){
+			return res.status(409).json({
+				message: 'El usuario ya se encuentra registrado en la plataforma'
+			})
+		}
 
 		const saveUser = await newUser.save()
 
@@ -40,9 +51,14 @@ export const createUser = async (req, res) => {
 			})
 		}
 
-		return res.status(200).json({
-			message: 'Usuario creado con exito',
-			data: saveUser
+		await sendMail({
+            email: email,
+            subject: "Bienvenido a la plataforma CFA",
+            message: `Tu correo electronico de acceso es el siguiente: ${email}, tu contraseña de acceso es la siguiente: ${password}`,
+        });
+
+		return res.status(201).json({
+			message: 'Tu cuenta ha sido creada con exito. Inicia sesión para continuar',
 		})
 
 	} catch (err) {

@@ -57,7 +57,7 @@ export const forgotPasswordEmail = async (req, res) => {
         await sendMail({
             email: email,
             subject: "Recuperar contraseña",
-            message: `Para generar una nueva contrasena del correo electronico ${email}, da click en el siguiente enlace: ${changePassword}`,
+            message: `Para generar una nueva contraseña del correo electronico ${email}, da click en el siguiente enlace: ${changePassword}`,
         });
 
         return res.status(200).json({

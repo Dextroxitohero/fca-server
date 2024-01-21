@@ -126,7 +126,6 @@ export const updatePreRegisterById = async (req, res) => {
 
         const hashedPassword = await User.encryptPassword(password)
 
-
         const newUser = await User.create({
             firstName: updatedUser.firstName,
             lastName: updatedUser.lastName,
@@ -158,9 +157,9 @@ export const getAllPreRegister = async (req, res) => {
             {
                 $lookup: {
                     from: 'users', // Nombre de la colección 'users'
-                    localField: 'assessor',
+                    localField: 'coordinador',
                     foreignField: '_id',
-                    as: 'assessorData'
+                    as: 'coordinadorData'
                 }
             },
             {
@@ -179,15 +178,15 @@ export const getAllPreRegister = async (req, res) => {
                     account: 1,
                     fileName: 1,
                     createdAt: 1,
-                    assessorId: { $ifNull: [{ $arrayElemAt: ['$assessorData._id', 0] }, null] },
-                    assessor: {
+                    coordinadorId: { $ifNull: [{ $arrayElemAt: ['$coordinadorData._id', 0] }, null] },
+                    coordinador: {
                         $cond: {
-                            if: { $gt: [{ $size: '$assessorData' }, 0] },
+                            if: { $gt: [{ $size: '$coordinadorData' }, 0] },
                             then: {
                                 $concat: [
-                                    { $ifNull: [{ $arrayElemAt: ['$assessorData.firstName', 0] }, ''] },
+                                    { $ifNull: [{ $arrayElemAt: ['$coordinadorData.firstName', 0] }, ''] },
                                     ' ',
-                                    { $ifNull: [{ $arrayElemAt: ['$assessorData.lastName', 0] }, ''] }
+                                    { $ifNull: [{ $arrayElemAt: ['$coordinadorData.lastName', 0] }, ''] }
                                 ]
                             },
                             else: 'sin asesor'
@@ -240,7 +239,7 @@ export const getPreRegisterById = async (req, res) => {
         const { preRegisterId } = req.params;
 
         const preRegisterFound = await PreRegister.findById(preRegisterId)
-        .populate('assessor', 'firstName lastName');
+        .populate('coordinador', 'firstName lastName');
 
         if (!preRegisterFound) {
             return res.status(404).json({
@@ -261,13 +260,13 @@ export const getPreRegisterById = async (req, res) => {
 
 export const validatePaymentVoucher = async (req, res) => {
     try {
-        const { account, id, assessor } = req.body;
+        const { account, id, coordinador } = req.body;
         const file = req.file;
         const updatedUser = await PreRegister.findByIdAndUpdate(id,
             {
                 account,
                 status: 'validando',
-                assessor: assessor,
+                coordinador: coordinador,
                 fileName: file.filename
             },
             {

@@ -40,12 +40,13 @@ const preRegisterSchema = new Schema({
         default: 'prospecto'
     },
     account: {
-        type: String,        
+        type: Schema.Types.ObjectId,
+        ref: 'AccountBank',    
     },
     fileName: {
         type: String,        
     },
-    assessor: {
+    coordinador: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }

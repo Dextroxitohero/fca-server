@@ -2,22 +2,24 @@ import Color from '../models/Color';
 import Language from '../models/Language';
 import Level from '../models/Level';
 import User from '../models/User';
+import AccountBank from '../models/accountBank';
+import Course from '../models/Course';
 
-export const getAllAssessors = async (req, res) => {
+export const getAllCoordinadors = async (req, res) => {
 	try {
 
-		const assessorsList = await User.find(
-			{ typeUser: 'assesor' }, 
+		const coordinadorList = await User.find(
+			{ typeUser: 'coordinador' }, 
 			'_id firstName lastName secondName'
 		).exec();
 		
-		const assessorsWithFullName = assessorsList.map(assessor => ({
-			value: assessor._id,
-			description: `${assessor.firstName} ${assessor.secondName || ''} ${assessor.lastName}`
+		const coordinadorsWithFullName = coordinadorList.map(coordinador => ({
+			value: coordinador._id,
+			description: `${coordinador.firstName} ${coordinador.secondName || ''} ${coordinador.lastName}`
 		}));
 
 		return res.status(200).json({
-			data: assessorsWithFullName
+			data: coordinadorsWithFullName
 		});
 
 	} catch (error) {
@@ -94,15 +96,36 @@ export const getAllLanguages = async (req, res) => {
 
 export const getAllTeachers = async (req, res) => {
 	try {
-		const users = await User.find();
-		
-		const allUsers = users.map(user => ({
-			_id: user._id,
-			name: `${user.firstName} ${user.lastName}`
+		// Modificamos la consulta para obtener solo profesores
+		const teachers = await User.find({ typeUser: 'profesor' });
+
+		const allTeachers = teachers.map(teacher => ({
+			_id: teacher._id,
+			name: `${teacher.firstName} ${teacher.lastName}`
 		}));
 
 		return res.status(200).json({
-			data: allUsers
+			data: allTeachers
+		});
+
+	} catch (error) {
+		return res.status(500).json({
+			message: 'Ocurrió un error, inténtalo de nuevo'
+		});
+	}
+};
+
+export const getAllAccountsBank = async (req, res) => {
+	try {
+		const accountsBank = await AccountBank.find();
+		
+		const allAccountsBank = accountsBank.map(accountBank => ({
+			value: accountBank._id,
+			description: accountBank.numberAccount,
+		}));
+
+		return res.status(200).json({
+			data: allAccountsBank
 		});
 
 	} catch (error) {
@@ -110,4 +133,72 @@ export const getAllTeachers = async (req, res) => {
 			message: 'Ocurrio un error, intenta de nuevo'
 		});
 	}
+};
+
+export const getAllCourses = async (req, res) => {
+    try {
+        const courses = await Course.aggregate([
+            {
+                $lookup: {
+                    from: 'languages',
+                    localField: 'language',
+                    foreignField: '_id',
+                    as: 'language'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'levels',
+                    localField: 'level',
+                    foreignField: '_id',
+                    as: 'level'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'teacher',
+                    foreignField: '_id',
+                    as: 'teacher'
+                }
+            },
+            {
+                $project: {
+                    language: {
+                        $ifNull: [{ $arrayElemAt: ['$language.name', 0] }, '']
+                    },
+                    level: {
+                        $ifNull: [{ $arrayElemAt: ['$level.name', 0] }, '']
+                    },
+                    teacher: {
+                        $cond: {
+                            if: { $gt: [{ $size: '$teacher' }, 0] },
+                            then: {
+                                $concat: [
+                                    { $ifNull: [{ $arrayElemAt: ['$teacher.firstName', 0] }, ''] },
+                                    ' ',
+                                    { $ifNull: [{ $arrayElemAt: ['$teacher.lastName', 0] }, ''] }
+                                ]
+                            },
+                            else: ''
+                        }
+                    },
+                    limitMembers: { $ifNull: ['$limitMembers', ''] },
+                    startDate: { $ifNull: ['$startDate', ''] },
+                    endDate: { $ifNull: ['$endDate', ''] },
+                    hours: { $ifNull: ['$hours', ''] },
+                    days: { $ifNull: ['$days', ''] },
+                    status: { $ifNull: ['$status', ''] }
+                }
+            }
+        ]);
+
+        return res.status(200).json( {data: courses} );
+
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Error al obtener la lista de cursos.',
+            error
+        });
+    }
 };
