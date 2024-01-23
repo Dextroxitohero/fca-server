@@ -7,7 +7,9 @@ import {
     MAIL_PASSWORD
 } from '../config';
 
+import logo from './logo.png'
 
+const nameUser = 'Erick Hernandez Morales';
 
 
 const html = `
@@ -23,7 +25,7 @@ style="
 <div style="display: block">
   <img
     style="display: block; width: 30%; margin: 0px auto"
-    src="${'./logo.png'}"
+    src=${logo}
     alt=""
   />
 </div>
@@ -45,7 +47,7 @@ style="
         font-family: Verdana, Geneva, Tahoma, sans-serif;
       "
     >
-      BIENVENIDO: Emilio Córdova Morales
+      BIENVENIDO: ${nameUser}
     </h4>
     <p
       style="
