@@ -7,10 +7,9 @@ import {
     MAIL_PASSWORD
 } from '../config';
 
-import logo from './logo.png'
 
 const nameUser = 'Erick Hernandez Morales';
-
+const logo = './logo.png';
 
 const html = `
 <div
