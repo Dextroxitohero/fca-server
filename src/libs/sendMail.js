@@ -6,10 +6,11 @@ import {
     MAIL_USER,
     MAIL_PASSWORD
 } from '../config';
+import * as path from 'path';
 
 
 const nameUser = 'Erick Hernandez Morales';
-const logo = './logo.png';
+const logoPath = path.join(__dirname, 'logo.png');
 
 const html = `
 <div
@@ -24,7 +25,7 @@ style="
 <div style="display: block">
   <img
     style="display: block; width: 30%; margin: 0px auto"
-    src=${logo}
+    src="cid:logo"
     alt=""
   />
 </div>
@@ -167,7 +168,14 @@ export const sendMail = async (options) => {
             to: options.email,
             subject: options.subject,
             text: options.message,
-            html: html
+            html: html,
+            attachments: [
+                {
+                    filename: 'logo.png',
+                    path: logoPath,
+                    cid: 'logo' // Utiliza el mismo CID que en el src de la etiqueta img
+                }
+            ]
         };
         // Enviamos el correo electrónico
         const info = await transporter.sendMail(mailOptions);
