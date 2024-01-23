@@ -8,6 +8,8 @@ import {
 } from '../config';
 
 
+
+
 const html = `
 <div
 style="
@@ -21,7 +23,7 @@ style="
 <div style="display: block">
   <img
     style="display: block; width: 30%; margin: 0px auto"
-    src="./logo.png"
+    src="${'./logo.png'}"
     alt=""
   />
 </div>
