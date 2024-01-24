@@ -10,7 +10,8 @@ import * as path from 'path';
 
 
 const nameUser = 'Erick Hernandez Morales';
-const logoPath = path.join(__dirname, 'logo.png');
+const logoPath = path.join(__dirname, './logo.png');
+console.log(logoPath);
 
 const html = `
 <div
