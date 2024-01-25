@@ -57,7 +57,8 @@ export const forgotPasswordEmail = async (req, res) => {
         await sendMail({
             email: email,
             subject: "Recuperar contraseña",
-            message: `Para generar una nueva contraseña del correo electronico ${email}, da click en el siguiente enlace: ${changePassword}`,
+            template: "templateRequestPassword",
+            data: { email: email, link: changePassword }
         });
 
         return res.status(200).json({
@@ -66,6 +67,7 @@ export const forgotPasswordEmail = async (req, res) => {
         })
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: "Server error, try again!!!"
         })
@@ -93,7 +95,8 @@ export const updatedPassword = async (req, res) => {
         await sendMail({
             email: email,
             subject: "Actualizacion contraseña",
-            message: `Tu contraseña se actualizo correctamente. Tu nueva es: ${password} `,
+            template: "templateUpdatePassword",
+            data: {password: password},
         });
 
         return res.status(200).json({
