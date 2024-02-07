@@ -2,7 +2,7 @@ import Color from '../models/Color';
 import Language from '../models/Language';
 import Level from '../models/Level';
 import User from '../models/User';
-import AccountBank from '../models/accountBank';
+import AccountBank from '../models/AccountNumber';
 import Course from '../models/Course';
 
 export const getAllCoordinadors = async (req, res) => {

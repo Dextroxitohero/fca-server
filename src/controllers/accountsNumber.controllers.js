@@ -1,11 +1,11 @@
-import AccountBank from '../models/accountBank';
+import AccountNumber from '../models/AccountNumber';
 
 
-export const getAllAccountsBank = async (req, res) => {
+export const getAllAccountsNumber = async (req, res) => {
     try {
-        const accountBanks = await AccountBank.find();
+        const accountNumber = await AccountNumber.find();
 
-        return res.status(200).json({ accountBanks });
+        return res.status(200).json({ accountNumber });
 
     } catch (error) {
         return res.status(500).json({
@@ -15,11 +15,11 @@ export const getAllAccountsBank = async (req, res) => {
     }
 };
 
-export const addAccountBank = async (req, res) => {
+export const addAccountNumber = async (req, res) => {
     try {
         const { nameAccount, numberAccount } = req.body;
 
-        const existingAccount = await AccountBank.findOne({ nameAccount });
+        const existingAccount = await AccountNumber.findOne({ nameAccount });
 
         if (existingAccount) {
             return res.status(400).json({
@@ -27,12 +27,12 @@ export const addAccountBank = async (req, res) => {
             });
         }
         
-        const newAccount = new AccountBank({ nameAccount, numberAccount });
+        const newAccount = new AccountNumber({ nameAccount, numberAccount });
         await newAccount.save();
 
         return res.status(201).json({
             message: 'Numero de cuenta agregado con éxito.',
-            AccountBank: newAccount
+            data: newAccount
         });
 
     } catch (error) {
@@ -43,18 +43,15 @@ export const addAccountBank = async (req, res) => {
     }
 };
 
-export const updateAccountBank = async (req, res) => {
+export const updateAccountNumber = async (req, res) => {
     try {
         const { accountId } = req.params;
         const { nameAccount, numberAccount } = req.body;
-        console.log(accountId)
-        console.log(nameAccount)
-        console.log(numberAccount)
 
-        const accountBankToUpdate = await AccountBank.findByIdAndUpdate(accountId, 
+        const accountNumberToUpdate = await AccountNumber.findByIdAndUpdate(accountId, 
             { nameAccount, numberAccount }, { new: true });
 
-        if (!accountBankToUpdate) {
+        if (!accountNumberToUpdate) {
             return res.status(404).json({
                 message: 'El numero de cuenta no se ha encontrado.'
             });
@@ -62,7 +59,7 @@ export const updateAccountBank = async (req, res) => {
 
         return res.status(200).json({
             message: 'El numero de cuenta actualizado con éxito.',
-            language: accountBankToUpdate
+            data: accountNumberToUpdate
         });
 
     } catch (error) {
@@ -73,11 +70,11 @@ export const updateAccountBank = async (req, res) => {
     }
 };
 
-export const deleteAccountBank = async (req, res) => {
+export const deleteAccountNumber = async (req, res) => {
     try {
         const { accountId } = req.params;
 
-        const deletedAccount = await AccountBank.findByIdAndRemove(accountId);
+        const deletedAccount = await AccountNumber.findByIdAndRemove(accountId);
 
         if (!deletedAccount) {
             return res.status(404).json({

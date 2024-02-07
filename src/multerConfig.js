@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     // Utiliza el correo electrónico como nombre del archivo
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-    const userId = req.body.id;
+    const userId = req.body.id || req.body.name.trim().replace(/ /g, '').toLowerCase();
     const fileName = `${userId}-${uniqueSuffix}${path.extname(file.originalname)}`;
     cb(null, fileName);
   }

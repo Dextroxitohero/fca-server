@@ -1,19 +1,16 @@
 import { Schema, model } from 'mongoose';
 
-const accountBankSchema = new Schema({
-    nameAccount: {
+const headerImageSchema = new Schema({
+    name: {
         type: String,
         unique: true,
         required: true
-    },
-    numberAccount: {
+    }, fileName: {
         type: String,
-        unique: true,
-        required: true
     },
 }, {
     timestamps: true,
     versionKey: false
 });
 
-export default model('AccountBank', accountBankSchema);
+export default model('HeaderImage', headerImageSchema);

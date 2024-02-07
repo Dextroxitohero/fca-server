@@ -13,8 +13,9 @@ import languageRoutes from './routes/language.routes';
 import levelRoutes from './routes/level.routes';
 import colorRoutes from './routes/color.routes';
 import courseRoutes from './routes/course.routes';
-import accountsBankRoutes from './routes/accountsBank.routes';
+import accountsNumberRoutes from './routes/accountsNumber.routes';
 import refreshTokenRoutes from './routes/refreshToken.routes';
+import headerImageRoutes from './routes/headerImage.routes';
 
 
 import { BASE_URL_DEV, BASE_URL_PRODUCTION } from './config';
@@ -79,7 +80,8 @@ app.use('/language', languageRoutes);
 app.use('/level', levelRoutes);
 app.use('/color', colorRoutes);
 app.use('/course', courseRoutes);
-app.use('/accountsBank', accountsBankRoutes);
+app.use('/accountNumber', accountsNumberRoutes);
 app.use('/refresh-token', refreshTokenRoutes);
+app.use('/headerImage', headerImageRoutes);
 
 export default app;
