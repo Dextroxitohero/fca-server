@@ -17,10 +17,10 @@ const courseSchema = new Schema({
         type: Number,
         require: true
     },
-    startDate: {
+    fromDate: {
         type: Date,
     },
-    endDate: {
+    toDate: {
         type: Date,
     },
     hours: {
@@ -38,11 +38,19 @@ const courseSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
     },
+    headerImage: {
+        type: Schema.Types.ObjectId,
+        ref: 'HeaderImage',
+    },
     students: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
     createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    updatedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User',
     }

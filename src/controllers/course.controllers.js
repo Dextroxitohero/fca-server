@@ -36,6 +36,17 @@ export const getAllCourses = async (req, res) => {
                 }
             },
             {
+                $lookup: {
+                    from: 'headerimages', 
+                    localField: 'headerImage',
+                    foreignField: '_id',
+                    as: 'headerImage'
+                }
+            },
+            {
+                $unwind: '$headerImage'
+            },
+            {
                 $project: {
                     language: {
                         $ifNull: [{ $arrayElemAt: ['$language.name', 0] }, '']
@@ -62,9 +73,17 @@ export const getAllCourses = async (req, res) => {
                             else: ''
                         }
                     },
+                    headerImage: {
+                        _id: {
+                            $ifNull: ['$headerImage._id', null]
+                        },
+                        fileName: {
+                            $ifNull: ['$headerImage.fileName', '']
+                        }
+                    },
                     limitMembers: { $ifNull: ['$limitMembers', ''] },
-                    startDate: { $ifNull: ['$startDate', ''] },
-                    endDate: { $ifNull: ['$endDate', ''] },
+                    fromDate: { $ifNull: ['$fromDate', ''] },
+                    toDate: { $ifNull: ['$toDate', ''] },
                     hours: { $ifNull: ['$hours', ''] },
                     days: { $ifNull: ['$days', ''] },
                     status: { $ifNull: ['$status', ''] }
@@ -92,6 +111,7 @@ export const getCourseById = async (req, res) => {
             .populate('level', 'name')
             .populate('color', 'name clase selectedClass')
             .populate('teacher', '_id firstName lastName')
+            .populate('headerImage');
 
         if (!course) {
             return res.status(404).json({
