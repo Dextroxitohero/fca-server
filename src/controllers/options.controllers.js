@@ -156,6 +156,14 @@ export const getAllCourses = async (req, res) => {
             },
             {
                 $lookup: {
+                    from: 'colors',
+                    localField: 'color',
+                    foreignField: '_id',
+                    as: 'color'
+                }
+            },
+            {
+                $lookup: {
                     from: 'users',
                     localField: 'teacher',
                     foreignField: '_id',
@@ -163,12 +171,29 @@ export const getAllCourses = async (req, res) => {
                 }
             },
             {
+                $lookup: {
+                    from: 'headerimages', 
+                    localField: 'headerImage',
+                    foreignField: '_id',
+                    as: 'headerImage'
+                }
+            },
+            {
+                $unwind: '$headerImage'
+            },
+            {
                 $project: {
                     language: {
                         $ifNull: [{ $arrayElemAt: ['$language.name', 0] }, '']
                     },
+                    path: {
+                        $ifNull: [{ $arrayElemAt: ['$language.path', 0] }, '']
+                    },
                     level: {
                         $ifNull: [{ $arrayElemAt: ['$level.name', 0] }, '']
+                    },
+                    color: {
+                        $ifNull: [{ $arrayElemAt: ['$color.clase', 0] }, '']
                     },
                     teacher: {
                         $cond: {
@@ -183,9 +208,17 @@ export const getAllCourses = async (req, res) => {
                             else: ''
                         }
                     },
+                    headerImage: {
+                        _id: {
+                            $ifNull: ['$headerImage._id', null]
+                        },
+                        fileName: {
+                            $ifNull: ['$headerImage.fileName', '']
+                        }
+                    },
                     limitMembers: { $ifNull: ['$limitMembers', ''] },
-                    startDate: { $ifNull: ['$startDate', ''] },
-                    endDate: { $ifNull: ['$endDate', ''] },
+                    fromDate: { $ifNull: ['$fromDate', ''] },
+                    toDate: { $ifNull: ['$toDate', ''] },
                     hours: { $ifNull: ['$hours', ''] },
                     days: { $ifNull: ['$days', ''] },
                     status: { $ifNull: ['$status', ''] }
