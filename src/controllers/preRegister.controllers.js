@@ -1,7 +1,9 @@
 import { generatePassword } from '../libs/generatePasword';
 import { sendMail } from '../libs/sendMail';
 import PreRegister from '../models/PreRegister';
+import Course from '../models/Course';
 import User from '../models/User';
+import { formatDate } from '../libs/formatDate';
 
 export const emailVerification = async (req, res) => {
     try {
@@ -56,7 +58,7 @@ export const createPreRegister = async (req, res) => {
         const foundUser = await User.findOne({ email })
 
         if (foundUser) {
-            return res.status(500).json({
+            return res.status(409).json({
                 message: 'El usuario ya se encuentra disponible',
                 success: false
             })
@@ -65,7 +67,7 @@ export const createPreRegister = async (req, res) => {
         const foundUserPreRegister = await PreRegister.findOne({ email })
 
         if (foundUserPreRegister) {
-            return res.status(500).json({
+            return res.status(409).json({
                 message: 'El usuario ya este pre registrado',
                 success: false
             })
@@ -89,7 +91,7 @@ export const createPreRegister = async (req, res) => {
         await sendMail({
             email: newPreRegister.email,
             subject: "Datos de pago",
-            message: `Te dejamos nuestros canal de pagos. Cuando realices tu pago puedes subir tu comprobante aqui con tu correo electronico con el que te registrastes. https://fca-client-production.up.railway.app/pre-registro`,
+            template: "templateDataPayment",
         });
 
         return res.status(201).json({
@@ -99,6 +101,7 @@ export const createPreRegister = async (req, res) => {
         })
 
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             message: 'Error al agregar el usuario',
             success: false
@@ -239,14 +242,14 @@ export const getPreRegisterById = async (req, res) => {
         const { preRegisterId } = req.params;
 
         const preRegisterFound = await PreRegister.findById(preRegisterId)
-        .populate('coordinador', 'firstName lastName');
+            .populate('coordinador', 'firstName lastName');
 
         if (!preRegisterFound) {
             return res.status(404).json({
                 message: 'Registro de preinscripción no encontrado'
             });
         }
-        
+
         return res.status(200).json({
             data: preRegisterFound
         });
@@ -279,7 +282,7 @@ export const validatePaymentVoucher = async (req, res) => {
             await sendMail({
                 email: updatedUser.email,
                 subject: "Validacion de pago",
-                message: `Tu comprobante de pago va ser valido y si todo es exitoso vas recibir un email con tus accesos.`,
+                template: "templateValidationPayment",
             });
 
             return res.status(200).json({
@@ -300,3 +303,130 @@ export const validatePaymentVoucher = async (req, res) => {
     }
 };
 
+export const validateCandidate = async (req, res) => {
+    try {
+        const { createdBy, paymentDeadlineDate, idCourse, idPreregister } = req.body;
+
+        const foundPreRegister = await PreRegister.findById(idPreregister);
+
+        if (!foundPreRegister) {
+            return res.status(404).json({
+                message: 'No se encontro el usuario, intente de nuevo',
+            });
+        }
+
+        const foundCourse = await Course.findById(idCourse);
+
+        let timeStart = '';
+        let timeEnd = '';
+        let daystart = '';
+        let daysCourse = '';
+
+        if (foundCourse) {
+            const { days, hours, fromDate } = foundCourse;
+            timeStart = hours[0].time;
+            timeEnd = hours[hours.length - 1].time;
+            daystart = fromDate;
+            daysCourse = days.map(day => day.day);
+        }
+
+        if (!foundCourse) {
+            return res.status(404).json({
+                message: 'No se encontro el curso, intente de nuevo',
+            });
+        }
+
+        const updatedPreRegister = await PreRegister.findByIdAndUpdate(idPreregister,
+            {
+                status: 'completado',
+            },
+            {
+                new: true
+            }
+        );
+
+        const { firstName, lastName, email, phone, location, education, dateBirth } = updatedPreRegister;
+
+        const password = generatePassword();
+
+        const foundUser = await User.findOne({ email })
+
+        if (foundUser) {
+            return res.status(409).json({
+                message: 'El usuario ya se encuentra registrado en la plataforma'
+            })
+        }
+
+        const newUser = new User({
+            firstName: firstName?.toLowerCase(),
+            lastName: lastName?.toLowerCase(),
+            email: email,
+            phone,
+            location: location?.toLowerCase(),
+            education: education?.toLowerCase(),
+            typeUser: 'estudiante',
+            dateBirth,
+            password: await User.encryptPassword(password),
+            updatedBy: createdBy,
+            createdBy: createdBy,
+            paymentDeadlineDate: paymentDeadlineDate,
+        })
+
+        const saveUser = await newUser.save()
+
+        const { _id: studentId, matricula } = saveUser;
+
+        // Verifica si el estudiante ya está en el curso
+        if (foundCourse.students.includes(studentId)) {
+            return res.status(400).json({ message: 'Este estudiante ya está inscrito en el curso.' });
+        }
+
+        // Verifica si hay espacio disponible antes de agregar al estudiante
+        if (foundCourse.students.length >= foundCourse.limitMembers) {
+            return res.status(400).json({ message: 'El curso está lleno. No se pueden agregar más estudiantes.' });
+        }
+
+        saveUser.courses.push(idCourse);
+
+        foundCourse.students.push(studentId);
+
+        foundCourse.limitMembers = foundCourse.limitMembers - 1;
+
+        await foundCourse.save();
+
+        await saveUser.save();
+
+        if (saveUser === null) {
+            return res.status(500).json({
+                message: 'Server error, try again!'
+            })
+        }
+
+        await sendMail({
+            email: email,
+            subject: "Bienvenido a la plataforma CFA",
+            template: "templateWelcome",
+            data: {
+                firstName: firstName.toUpperCase(),
+                lastName: lastName.toUpperCase(),
+                email: email,
+                matricula: matricula,
+                password: password,
+                timeStart: timeStart,
+                timeEnd: timeEnd,
+                daystart: formatDate(daystart).toUpperCase(),
+                daysCourse: daysCourse.toString().replace(/,/g, ", ").toUpperCase(),
+            }
+        });
+
+        return res.status(201).json({
+            message: 'Tu candidatura ha sido validada, se ha enviado un correo con tus datos de acceso',
+        });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: 'Hubo un error al validar el comprobante de pago'
+        });
+    }
+};

@@ -6,6 +6,16 @@ const accountNumberSchema = new Schema({
         unique: true,
         required: true
     },
+    namePerson: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    numberCable: {
+        type: String,
+        unique: true,
+        required: true
+    },
     numberAccount: {
         type: String,
         unique: true,

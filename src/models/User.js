@@ -45,10 +45,25 @@ const userSchema = new Schema({
         },
         Admin: Number
     },
+    courses: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Course'
+    }],
     typeUser: {
         type: String,
         enum: ['estudiante', 'profesor', 'control escolar', 'administrativo', 'desarrollador' ,'director', 'subdirector', 'coordinador', 'ventas', 'cobranza','invitado'],
         require: true
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    updatedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    paymentDeadlineDate: {
+        type: String,
     },
 }, {
     timestamps: true,

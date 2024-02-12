@@ -101,7 +101,8 @@ export const getAllTeachers = async (req, res) => {
 
 		const allTeachers = teachers.map(teacher => ({
 			_id: teacher._id,
-			name: `${teacher.firstName} ${teacher.lastName}`
+			name: `${teacher.firstName} ${teacher.lastName}`,
+			description: `${teacher.firstName} ${teacher.lastName}`
 		}));
 
 		return res.status(200).json({

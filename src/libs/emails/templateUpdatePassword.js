@@ -1,71 +1,65 @@
 export const updatedPassword = ({ password }) => {
     return `
     <div
-    style="
-      display: block;
-      margin: 0px auto;
-      width: 95%;
-      background: #f7f7ff;
-      padding-top: 50px;
-      box-sizing: content-box;
-    "
-  >
-    <div style="display: block">
-      <img
-        style="display: block; width: 40%; margin: 0px auto"
-        src="https://www.cfamex.com/imagenes/LOGOFCA.png"
-        alt=""
-      />
-    </div>
-    <div style="width: 90%; margin: 0px auto">
-      <div style="width: 100%">
-        <h2
-          style="
-            margin-top: 80px;
-            text-align: center;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-          "
-        >
-          ACTUALIZACION DE CONTRASENA
-        </h2>
-        <p
-          style="
-            text-align: center;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-          "
-        >
-          Tu contraseña se actualizo correctamente. <br />
-          Tu nueva es: ${password}
-        </p>
-      </div>
-    </div>
-    <div
       style="
-        width: 100%;
-        margin: 50px auto 50px;
-        display: flex;
-        justify-content: center;
+        display: block;
+        margin: 0px auto;
+        width: 95%;
+        background: #f7f7ff;
+        padding-top: 50px;
+        box-sizing: content-box;
       "
     >
-      <a
-        style="
-          width: 200px;
-          text-decoration: none;
-          background: #4f46e5;
-          color: white;
-          font-weight: bold;
-          padding: 20px 40px 20px;
-          border-radius: 10px;
-          text-align: center;
-          font-family: Verdana, Geneva, Tahoma, sans-serif;
-        "
-        href="https://fca-client-production.up.railway.app/"
-        >INICIAR SESION</a
-      >
-    </div>
-    <hr />
-    <div style="width: 90%; margin: 0px auto">
-      <div style="width: 100%">
+      <div style="display: block">
+        <img
+          style="display: block; width: 40%; margin: 0px auto"
+          src="https://www.cfamex.com/imagenes/LOGOFCA.png"
+          alt=""
+        />
+      </div>
+      <div style="width: 90%; margin: 0px auto">
+        <div style="width: 100%">
+          <h2
+            style="
+              margin-top: 80px;
+              text-align: center;
+              font-family: Verdana, Geneva, Tahoma, sans-serif;
+            "
+          >
+            ACTUALIZACION DE CONTRASENA
+          </h2>
+          <p
+            style="
+              text-align: center;
+              font-family: Verdana, Geneva, Tahoma, sans-serif;
+            "
+          >
+            Tu contraseña se actualizo correctamente. <br />
+            Tu nueva es: ${password}
+          </p>
+        </div>
+      </div>
+      <div style="width: 100%; margin: 50px auto 50px">
+        <a
+          style="
+            display: block;
+            margin: 0px auto;
+            width: 200px;
+            text-decoration: none;
+            background: #4f46e5;
+            color: white;
+            font-weight: bold;
+            padding: 20px 40px 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+          "
+          href="https://fca-client-production.up.railway.app/"
+          >INICIAR SESION</a
+        >
+      </div>
+      <hr />
+      <div style="width: 100%; margin: 50px auto; padding: 0px 0px 50px 0px">
         <p
           style="
             margin-top: 50px;
@@ -75,8 +69,8 @@ export const updatedPassword = ({ password }) => {
             font-weight: bold;
           "
         >
-          A continuación, te proporcionamos nuestro directorio de contactos
-          con su respectivo horario de atención:
+          A continuación, te proporcionamos nuestro directorio de contactos con
+          su respectivo horario de atención:
         </p>
         <div
           style="
@@ -132,6 +126,5 @@ export const updatedPassword = ({ password }) => {
         </div>
       </div>
     </div>
-  </div>
     `
 }

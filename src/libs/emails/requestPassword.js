@@ -39,16 +39,11 @@ export const templateRequestPassword = ({ email, link }) => {
           </p>
         </div>
       </div>
-      <div
-        style="
-          width: 100%;
-          margin: 50px auto 50px;
-          display: flex;
-          justify-content: center;
-        "
-      >
+      <div style="width: 100%; margin: 50px auto 50px">
         <a
           style="
+            display: block;
+            margin: 0px auto;
             width: 300px;
             text-decoration: none;
             background: #4f46e5;
@@ -81,10 +76,9 @@ export const templateRequestPassword = ({ email, link }) => {
           <div
             style="
               width: 100%;
-              display: flex;
-              flex-direction: column;
-              justify-content: space-between;
-              align-items: center;
+              width: 100%;
+              margin: 50px auto;
+              padding: 0px 0px 50px 0px;
             "
           >
             <p

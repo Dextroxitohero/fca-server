@@ -6,16 +6,24 @@ import {
     MAIL_USER,
     MAIL_PASSWORD
 } from '../config';
+import { validationPayment } from './emails/templateValidationPayment';
+import { paymentData } from './emails/templatePaymentData';
 import { templeWelcome } from './emails/templateWelcome';
 import { templateRequestPassword } from './emails/requestPassword';
 import { updatedPassword } from './emails/templateUpdatePassword';
 
 const chooseTemplate = (template, data) => {
     switch (template) {
+        case 'templateWelcome':
+            return templeWelcome(data);
         case 'templateUpdatePassword':
             return updatedPassword(data);
         case 'templateRequestPassword':
             return templateRequestPassword(data);
+        case 'templateDataPayment':
+            return paymentData();
+        case 'templateValidationPayment':
+            return validationPayment();
         default:
             return null;
     }
