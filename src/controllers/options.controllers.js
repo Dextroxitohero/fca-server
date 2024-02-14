@@ -122,6 +122,8 @@ export const getAllAccountsBank = async (req, res) => {
 		
 		const allAccountsBank = accountsBank.map(accountBank => ({
 			value: accountBank._id,
+            name: accountBank.nameAccount,
+            cable: accountBank.numberCable,
 			description: accountBank.numberAccount,
 		}));
 

@@ -3,18 +3,13 @@ import { Schema, model } from 'mongoose';
 const accountNumberSchema = new Schema({
     nameAccount: {
         type: String,
-        unique: true,
         required: true
     },
     namePerson: {
         type: String,
-        unique: true,
-        required: true
     },
     numberCable: {
         type: String,
-        unique: true,
-        required: true
     },
     numberAccount: {
         type: String,
