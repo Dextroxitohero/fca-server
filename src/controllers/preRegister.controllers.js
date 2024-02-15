@@ -101,7 +101,6 @@ export const createPreRegister = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error)
         return res.status(500).json({
             message: 'Error al agregar el usuario',
             success: false
@@ -154,50 +153,112 @@ export const updatePreRegisterById = async (req, res) => {
     }
 }
 
+
 export const getAllPreRegister = async (req, res) => {
+    const { id, roles } = req.params;
+
     try {
-        const preRegisters = await PreRegister.aggregate([
-            {
-                $lookup: {
-                    from: 'users', // Nombre de la colección 'users'
-                    localField: 'coordinador',
-                    foreignField: '_id',
-                    as: 'coordinadorData'
-                }
-            },
-            {
-                $project: {
-                    _id: 0, // Excluimos el campo _id
-                    id: '$_id', // Creamos un nuevo campo id con el valor del campo _id
-                    firstName: 1,
-                    lastName: 1,
-                    email: 1,
-                    phone: 1,
-                    dateBirth: 1,
-                    location: 1,
-                    education: 1,
-                    language: 1,
-                    status: 1,
-                    account: 1,
-                    fileName: 1,
-                    createdAt: 1,
-                    coordinadorId: { $ifNull: [{ $arrayElemAt: ['$coordinadorData._id', 0] }, null] },
-                    coordinador: {
-                        $cond: {
-                            if: { $gt: [{ $size: '$coordinadorData' }, 0] },
-                            then: {
-                                $concat: [
-                                    { $ifNull: [{ $arrayElemAt: ['$coordinadorData.firstName', 0] }, ''] },
-                                    ' ',
-                                    { $ifNull: [{ $arrayElemAt: ['$coordinadorData.lastName', 0] }, ''] }
-                                ]
-                            },
-                            else: 'sin asesor'
+        let preRegisters;
+
+        if (roles === 'user') {
+            // Filtra solo los registros que tienen relación con el ID del usuario
+            preRegisters = await PreRegister.aggregate([
+                {
+                    $match: {
+                        $expr: {
+                            $eq: ["$coordinador", { $toObjectId: id }]
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'coordinador',
+                        foreignField: '_id',
+                        as: 'coordinadorData'
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        id: '$_id',
+                        firstName: 1,
+                        lastName: 1,
+                        email: 1,
+                        phone: 1,
+                        dateBirth: 1,
+                        location: 1,
+                        education: 1,
+                        language: 1,
+                        status: 1,
+                        account: 1,
+                        fileName: 1,
+                        createdAt: 1,
+                        coordinadorId: { $ifNull: [{ $arrayElemAt: ['$coordinadorData._id', 0] }, null] },
+                        coordinador: {
+                            $cond: {
+                                if: { $gt: [{ $size: '$coordinadorData' }, 0] },
+                                then: {
+                                    $concat: [
+                                        { $ifNull: [{ $arrayElemAt: ['$coordinadorData.firstName', 0] }, ''] },
+                                        ' ',
+                                        { $ifNull: [{ $arrayElemAt: ['$coordinadorData.lastName', 0] }, ''] }
+                                    ]
+                                },
+                                else: 'sin asesor'
+                            }
                         }
                     }
                 }
-            }
-        ]).sort({ createdAt: -1 });;
+            ]);
+        } else if (roles === 'admin') {
+            // Trae todos los preregistros para el rol de administrador
+            preRegisters = await PreRegister.aggregate([
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'coordinador',
+                        foreignField: '_id',
+                        as: 'coordinadorData'
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        id: '$_id',
+                        firstName: 1,
+                        lastName: 1,
+                        email: 1,
+                        phone: 1,
+                        dateBirth: 1,
+                        location: 1,
+                        education: 1,
+                        language: 1,
+                        status: 1,
+                        account: 1,
+                        fileName: 1,
+                        createdAt: 1,
+                        coordinadorId: { $ifNull: [{ $arrayElemAt: ['$coordinadorData._id', 0] }, null] },
+                        coordinador: {
+                            $cond: {
+                                if: { $gt: [{ $size: '$coordinadorData' }, 0] },
+                                then: {
+                                    $concat: [
+                                        { $ifNull: [{ $arrayElemAt: ['$coordinadorData.firstName', 0] }, ''] },
+                                        ' ',
+                                        { $ifNull: [{ $arrayElemAt: ['$coordinadorData.lastName', 0] }, ''] }
+                                    ]
+                                },
+                                else: 'sin asesor'
+                            }
+                        }
+                    }
+                }
+                // Otros pasos del pipeline si es necesario
+            ]);
+        } else {
+            return res.status(403).json({ message: 'No tienes permisos para acceder a esta información.' });
+        }
 
         const response = preRegisters.map(register => {
             // Crear un objeto Date a partir del campo createdAt
@@ -227,15 +288,12 @@ export const getAllPreRegister = async (req, res) => {
         return res.status(200).json({
             data: response
         });
-
     } catch (error) {
-
         return res.status(500).json({
             message: 'Error al obtener los registros de preinscripción'
         });
-
     }
-}
+};
 
 export const getPreRegisterById = async (req, res) => {
     try {
@@ -424,7 +482,6 @@ export const validateCandidate = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error)
         return res.status(500).json({
             message: 'Hubo un error al validar el comprobante de pago'
         });

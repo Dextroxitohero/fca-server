@@ -1,4 +1,4 @@
-export const updatedPassword = ({ password }) => {
+export const templateCreateByInvitation = ({email, password }) => {
     return `
     <div
       style="
@@ -26,17 +26,18 @@ export const updatedPassword = ({ password }) => {
               font-family: Verdana, Geneva, Tahoma, sans-serif;
             "
           >
-            ACTUALIZACION DE CONTRASENA
+            Tu perfil se ha creado correctamente.
           </h2>
           <p
-            style="
-              text-align: center;
-              font-family: Verdana, Geneva, Tahoma, sans-serif;
-            "
-          >
-            Tu contraseña se actualizo correctamente. <br />
-            Tu nueva es: ${password}
-          </p>
+          style="
+            text-align: center;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+          "
+        >
+        Tus Accesos son
+          <p style="text-align: center; font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: bold;">Usuario: ${email}</p>
+          <p style="text-align: center; font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: bold;">Contraseña: ${password}</p>
+        </p>   
         </div>
       </div>
       <div style="width: 100%; margin: 50px auto 50px">

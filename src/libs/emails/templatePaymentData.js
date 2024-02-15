@@ -38,6 +38,15 @@ export const paymentData = () => {
           subir tu comprobante aqui con tu correo electronico con el que te
           registrastes.
         </p>
+
+        <div style="display: block">
+        <img
+          style="display: block; width: 70%; margin: 0px auto"
+          src="https://www.cfamex.com/imagenes/cover-paymenty.png"
+          alt=""
+        />
+      </div>
+
       </div>
     </div>
     <div style="width: 100%; margin: 50px auto 50px">

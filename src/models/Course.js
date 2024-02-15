@@ -31,8 +31,8 @@ const courseSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['activo', 'inactivo'],
-        default: 'inactivo'
+        enum: ['en curso', 'abierto', 'finalizado', 'completado','cancelado'],
+        default: 'abierto'
     },
     teacher: {
         type: Schema.Types.ObjectId,

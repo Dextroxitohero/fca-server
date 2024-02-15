@@ -11,6 +11,8 @@ import { paymentData } from './emails/templatePaymentData';
 import { templeWelcome } from './emails/templateWelcome';
 import { templateRequestPassword } from './emails/requestPassword';
 import { updatedPassword } from './emails/templateUpdatePassword';
+import { templateCreateInvitation } from './emails/templateCreateInvitation';
+import { templateCreateByInvitation } from './emails/templateCreateByInvitation';
 
 const chooseTemplate = (template, data) => {
     switch (template) {
@@ -24,6 +26,10 @@ const chooseTemplate = (template, data) => {
             return paymentData();
         case 'templateValidationPayment':
             return validationPayment();
+        case 'templateCreateInvitation':
+            return templateCreateInvitation(data);
+        case 'templateCreateByInvitation':
+            return templateCreateByInvitation(data);
         default:
             return null;
     }

@@ -413,7 +413,6 @@ export const login = async (req, res) => {
             { expiresIn: '120s' }
         );
 
-        console.log(accessToken)
 
         // Generar un refresh token
         const refreshToken = jwt.sign(

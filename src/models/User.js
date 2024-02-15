@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 const userSchema = new Schema({
     matricula: {
         type: Number,
-        unique: true,        
+        unique: true,
     },
     firstName: {
         type: String,
@@ -39,11 +39,9 @@ const userSchema = new Schema({
         type: String,
     },
     roles: {
-        User: {
-            type: Number,
-            default: 2001
-        },
-        Admin: Number
+        type: String,
+        enum: ['user', 'admin', 'invitado'],
+        default: 'user',
     },
     courses: [{
         type: Schema.Types.ObjectId,
@@ -51,7 +49,7 @@ const userSchema = new Schema({
     }],
     typeUser: {
         type: String,
-        enum: ['estudiante', 'profesor', 'control escolar', 'administrativo', 'desarrollador' ,'director', 'subdirector', 'coordinador', 'ventas', 'cobranza','invitado'],
+        enum: ['estudiante', 'profesor', 'control escolar', 'administrativo', 'desarrollador', 'director', 'subdirector', 'coordinador', 'ventas', 'cobranza', 'invitado'],
         require: true
     },
     createdBy: {
@@ -81,6 +79,18 @@ userSchema.pre('save', async function (next) {
             const highestMatriculaOtroUsuario = await this.constructor.findOne({ typeUser: { $ne: 'estudiante' } }, 'matricula').sort('-matricula').exec();
             this.matricula = highestMatriculaOtroUsuario ? highestMatriculaOtroUsuario.matricula + 1 : 1;
         }
+    }
+    next();
+});
+
+userSchema.pre('save', async function (next) {
+    if (['estudiante', 'profesor', 'control escolar', 'coordinador', 'ventas', 'cobranza', 'invitado'].includes(this.typeUser)) {
+        // Configuración de roles para usuarios específicos
+        this.roles = 'user';
+
+    } else if (['administrativo', 'desarrollador', 'director', 'subdirector'].includes(this.typeUser)) {
+        // Configuración de roles para otros tipos de usuarios
+        this.roles = 'admin'
     }
     next();
 });

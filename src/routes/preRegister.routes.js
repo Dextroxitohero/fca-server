@@ -7,7 +7,7 @@ import { upload } from '../multerConfig';
 import * as preRegisterCtrl from '../controllers/preRegister.controllers';
 
 router.get('/', preRegisterCtrl.emailVerification);
-router.get('/allPreRegister', preRegisterCtrl.getAllPreRegister);
+router.get('/allPreRegister/:id/:roles', preRegisterCtrl.getAllPreRegister);
 router.get('/getPreRegisterById/:preRegisterId', preRegisterCtrl.getPreRegisterById);
 router.get('/emailVerification/:email', preRegisterCtrl.emailVerification);
 router.post('/', preRegisterCtrl.createPreRegister);

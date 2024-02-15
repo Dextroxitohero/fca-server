@@ -54,7 +54,8 @@ export const createUser = async (req, res) => {
 		await sendMail({
             email: email,
             subject: "Bienvenido a la plataforma CFA",
-            message: `Tu correo electronico de acceso es el siguiente: ${email}, tu contraseña de acceso es la siguiente: ${password}`,
+			template: 'templateCreateByInvitation',
+			data: { email: email, password: password}
         });
 
 		return res.status(201).json({
@@ -62,7 +63,6 @@ export const createUser = async (req, res) => {
 		})
 
 	} catch (err) {
-		// console.log(err)
 		return res.status(500).json({
 			message: 'Ocurrio un error, intenta de nuevo'
 		})
@@ -207,7 +207,8 @@ export const createUserByInvitation = async (req, res) => {
 		await sendMail({
 			email: email,
 			subject: "Invitacion nuevo usuario",
-			message: `Hola, para continuar con el proceso de registro, por favor ingresa al siguiente enlace: ${activationUrl}`,
+			template: 'templateCreateInvitation',
+			data: { link: activationUrl }
 		});
 
 		return res.status(201).json({
