@@ -15,7 +15,7 @@ export const getAllCoordinadors = async (req, res) => {
 		
 		const coordinadorsWithFullName = coordinadorList.map(coordinador => ({
 			value: coordinador._id,
-			description: `${coordinador.firstName} ${coordinador.secondName || ''} ${coordinador.lastName}`
+			description: `${coordinador.firstName} ${coordinador.lastName}`
 		}));
 
 		return res.status(200).json({
