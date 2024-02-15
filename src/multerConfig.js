@@ -4,7 +4,8 @@ import path from 'path';
 // Configurar el almacenamiento de archivos con Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/images');
+    // cb(null, 'uploads/images');
+    cb(null, RAILWAY_VOLUME_MOUNT_PATH);
   },
   filename: function (req, file, cb) {
     // Utiliza el correo electrónico como nombre del archivo
