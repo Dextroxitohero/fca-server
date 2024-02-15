@@ -1,3 +1,4 @@
+import e from 'express';
 import Language from '../models/Language';
 
 
@@ -8,6 +9,7 @@ export const getAllLanguages = async (req, res) => {
     return res.status(200).json({ languages });
 
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       message: 'Error al obtener los idiomas.',
       error
