@@ -28,7 +28,7 @@ const app = express()
 // custom middleware logger
 app.use(logger);
 
-app.use(cors({credentials: true, origin: BASE_URL_DEV }));
+app.use(cors({credentials: true, origin: 'https://fca-client-production.up.railway.app' }));
 // app.use(cors({credentials: true, origin: BASE_URL_PRODUCTION }));
 
 app.use(express.json({
