@@ -5,7 +5,7 @@ const headerImageSchema = new Schema({
         type: String,
         unique: true,
         required: true
-    }, fileName: {
+    }, urlName: {
         type: String,
     },
 }, {

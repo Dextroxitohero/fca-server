@@ -17,8 +17,7 @@ export const getAllHeaderImage = async (req, res) => {
 
 export const addheaderImage = async (req, res) => {
     try {
-        const { name } = req.body;
-        const file = req.file;
+        const { name, urlName } = req.body;
 
         const existingHeaderImage = await HeaderImage.findOne({ name });
         if (existingHeaderImage) {
@@ -29,7 +28,7 @@ export const addheaderImage = async (req, res) => {
         // Crear un nuevo level
         const newHeaderImage = new HeaderImage({
             name,
-            fileName: file.filename
+            urlName
         });
         await newHeaderImage.save();
 
@@ -39,7 +38,6 @@ export const addheaderImage = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error)
         return res.status(500).json({
             message: 'Error al obtener los emcabezados de imagenes.',
             error
