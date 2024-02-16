@@ -5,8 +5,8 @@ import path from 'path';
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // cb(null, '/uploads');
-    // cb(null, '/uploads');
-    cb(null, `${process.env.RAILWAY_VOLUME_MOUNT_PATH}/uploads`);
+    cb(null, '/uploads');
+    // cb(null, `${process.env.RAILWAY_VOLUME_MOUNT_PATH}/uploads`);
   },
   filename: function (req, file, cb) {
     // Utiliza el correo electrónico como nombre del archivo
