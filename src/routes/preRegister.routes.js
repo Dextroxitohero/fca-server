@@ -12,7 +12,7 @@ router.get('/getPreRegisterById/:preRegisterId', preRegisterCtrl.getPreRegisterB
 router.get('/emailVerification/:email', preRegisterCtrl.emailVerification);
 router.post('/', preRegisterCtrl.createPreRegister);
 router.put('/:preRegisterId', preRegisterCtrl.updatePreRegisterById);
-router.post('/validatePaymentVoucher', upload.single('file') ,  preRegisterCtrl.validatePaymentVoucher);
+router.post('/validatePaymentVoucher' , preRegisterCtrl.validatePaymentVoucher);
 router.post('/validateCandidate', preRegisterCtrl.validateCandidate);
 
 

@@ -4,8 +4,8 @@ const router = Router();
 
 import * as courseCtrl from '../controllers/course.controllers';
 
-router.get(`/:id/:roles`, courseCtrl.getAllCourses);
-router.get('/findById/:courseId', courseCtrl.getCourseById);
+router.get(`/getAllCourse/:id/:roles`, courseCtrl.getAllCourses);
+router.get('/findCourseById/:courseId', courseCtrl.getCourseById);
 router.post('/', courseCtrl.createCourse);
 router.put('/:courseId', courseCtrl.updateCourse);
 router.delete('/:courseId', courseCtrl.deleteCourse);

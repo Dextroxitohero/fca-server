@@ -43,7 +43,7 @@ const preRegisterSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'AccountBank',    
     },
-    fileName: {
+    urlName: {
         type: String,        
     },
     coordinador: {

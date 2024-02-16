@@ -321,14 +321,13 @@ export const getPreRegisterById = async (req, res) => {
 
 export const validatePaymentVoucher = async (req, res) => {
     try {
-        const { account, id, coordinador } = req.body;
-        const file = req.file;
+        const { account, id, coordinador, urlName } = req.body;
         const updatedUser = await PreRegister.findByIdAndUpdate(id,
             {
                 account,
                 status: 'validando',
                 coordinador: coordinador,
-                fileName: file.filename
+                urlName: urlName,
             },
             {
                 new: true

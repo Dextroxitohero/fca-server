@@ -97,8 +97,8 @@ export const getAllCourses = async (req, res) => {
                             _id: {
                                 $ifNull: ['$headerImage._id', null]
                             },
-                            fileName: {
-                                $ifNull: ['$headerImage.fileName', '']
+                            urlName: {
+                                $ifNull: ['$headerImage.urlName', '']
                             }
                         },
                         limitMembers: { $ifNull: ['$limitMembers', ''] },
@@ -186,8 +186,8 @@ export const getAllCourses = async (req, res) => {
                             _id: {
                                 $ifNull: ['$headerImage._id', null]
                             },
-                            fileName: {
-                                $ifNull: ['$headerImage.fileName', '']
+                            urlName: {
+                                $ifNull: ['$headerImage.urlName', '']
                             }
                         },
                         limitMembers: { $ifNull: ['$limitMembers', ''] },
@@ -215,7 +215,9 @@ export const getAllCourses = async (req, res) => {
 
 export const getCourseById = async (req, res) => {
     try {
-        const courseId = req.params.courseId; // Obtén el ID del curso de los parámetros de la solicitud
+        const courseId = req.params.courseId;
+        
+    // Obtén el ID del curso de los parámetros de la solicitud
 
         // Busca el curso por su ID y poblamos los campos de referencia
         const course = await Course.findById(courseId)
@@ -244,7 +246,6 @@ export const getCourseById = async (req, res) => {
 export const createCourse = async (req, res) => {
     try {
         const courseData = req.body; // Datos del curso a agregar
-
         // Crear un nuevo curso en la base de datos
         const newCourse = new Course(courseData);
         await newCourse.save();
@@ -266,6 +267,12 @@ export const updateCourse = async (req, res) => {
     try {
         const { courseId } = req.params;
         const updatedCourseData = req.body; // Datos actualizados del curso
+
+        Object.keys(updatedCourseData).forEach(key => {
+            if (updatedCourseData[key] === '') {
+                delete updatedCourseData[key];
+            }
+        });
 
         // Buscar y actualizar el curso por su ID
         const updatedCourse = await Course.findByIdAndUpdate(courseId, updatedCourseData, { new: true });
