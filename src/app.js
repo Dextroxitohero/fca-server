@@ -20,7 +20,7 @@ import headerImageRoutes from './routes/headerImage.routes';
 
 import { BASE_URL_DEV, BASE_URL_PRODUCTION } from './config';
 
-
+console.log('ruta' + process.env.RAILWAY_VOLUME_MOUNT_PATH)
 
 const app = express()
 
