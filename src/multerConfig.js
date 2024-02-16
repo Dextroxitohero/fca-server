@@ -4,7 +4,7 @@ import path from 'path';
 // Configurar el almacenamiento de archivos con Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/images');
+    cb(null, '/uploads');
     // cb(null, '/uploads');
     // cb(null, RAILWAY_VOLUME_MOUNT_PATH);
   },
