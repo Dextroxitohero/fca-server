@@ -120,13 +120,13 @@ export const getAllAccountsBank = async (req, res) => {
 	try {
 		const accountsBank = await AccountBank.find();
 		
-		const allAccountsBank = accountsBank.map(accountBank => ({
-			value: accountBank._id,
+		const allAccountsBank = accountsBank.map(accountBank => ({            
+            value: accountBank._id,
             name: accountBank.nameAccount,
             cable: accountBank.numberCable,
 			description: accountBank.numberAccount,
-		}));
-
+        }));
+        
 		return res.status(200).json({
 			data: allAccountsBank
 		});

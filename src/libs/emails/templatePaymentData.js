@@ -34,9 +34,8 @@ export const paymentData = () => {
             font-family: Verdana, Geneva, Tahoma, sans-serif;
           "
         >
-          Te dejamos nuestros canal de pagos. Cuando realices tu pago puedes
-          subir tu comprobante aqui con tu correo electronico con el que te
-          registrastes.
+          Cuando realices tu pago puedes subir tu comprobante aqui.
+          Te proporcionamos nuestros canales de pago:
         </p>
 
         <div style="display: block">

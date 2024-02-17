@@ -300,7 +300,7 @@ export const getPreRegisterById = async (req, res) => {
         const { preRegisterId } = req.params;
 
         const preRegisterFound = await PreRegister.findById(preRegisterId)
-            .populate('coordinador', 'firstName lastName');
+            .populate('coordinador', 'firstName lastName')
 
         if (!preRegisterFound) {
             return res.status(404).json({

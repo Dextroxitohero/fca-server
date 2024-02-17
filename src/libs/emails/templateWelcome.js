@@ -14,7 +14,7 @@ export const templeWelcome = ({firstName, lastName, email, matricula, password, 
     >
       <div style="display: block">
         <img
-          style="display: block; width: 25%; margin: 0px auto"
+          style="display: block; width: 40%; margin: 0px auto"
           src="https://www.cfamex.com/imagenes/LOGOFCA.png"
           alt=""
         />

@@ -17,7 +17,7 @@ export const getAllAccountsNumber = async (req, res) => {
 
 export const addAccountNumber = async (req, res) => {
     try {
-        const { nameAccount, namePerson, numberAccount } = req.body;
+        const { nameAccount, namePerson, numberAccount, numberCable } = req.body;
 
         const existingAccount = await AccountNumber.findOne({ nameAccount });
 
@@ -27,7 +27,7 @@ export const addAccountNumber = async (req, res) => {
             });
         }
         
-        const newAccount = new AccountNumber({ nameAccount, namePerson, numberAccount });
+        const newAccount = new AccountNumber({ nameAccount, namePerson, numberAccount, numberCable });
         await newAccount.save();
 
         return res.status(201).json({
@@ -36,7 +36,6 @@ export const addAccountNumber = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error)
         return res.status(500).json({
             message: 'Error al agregar el numero de cuenta.',
             error
