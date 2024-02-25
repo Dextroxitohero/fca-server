@@ -3,7 +3,11 @@ import morgan from 'morgan';
 import pkg from '../package.json';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+
 import { logger } from './middlewares/logEvents'
+import cron from 'node-cron';
+
+import { updateOpenCoursesStatus } from './tasks/updateStartCourse.tasks';
 
 import usersRoutes from './routes/users.routes';
 import authRoutes from './routes/auth.routes';
@@ -17,10 +21,9 @@ import accountsNumberRoutes from './routes/accountsNumber.routes';
 import refreshTokenRoutes from './routes/refreshToken.routes';
 import headerImageRoutes from './routes/headerImage.routes';
 
-
 import { BASE_URL_DEV, BASE_URL_PRODUCTION } from './config';
+import { updateEndCoursesStatus } from './tasks/updateEndCourse.task';
 
-// console.log('ruta' + process.env.RAILWAY_VOLUME_MOUNT_PATH)
 
 const app = express()
 
@@ -28,7 +31,7 @@ const app = express()
 // custom middleware logger
 app.use(logger);
 
-app.use(cors({credentials: true, origin: BASE_URL_DEV }));
+app.use(cors({ credentials: true, origin: BASE_URL_DEV }));
 // app.use(cors({credentials: true, origin: BASE_URL_PRODUCTION }));
 
 app.use(express.json({
@@ -70,6 +73,17 @@ app.use((req, res, next) => {
 	res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
 	res.header("Allow", "GET, POST");
 	next();
+});
+
+cron.schedule('0 0 * * *', async () => {
+	try {
+		await updateOpenCoursesStatus();
+		await updateEndCoursesStatus();
+	} catch (error) {
+		console.error('Error al actualizar cursos:', error);
+	}
+}, {
+	timezone: 'America/Mexico_City',
 });
 
 app.use('/users', usersRoutes);

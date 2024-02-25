@@ -8,6 +8,10 @@ const headerImageSchema = new Schema({
     }, urlName: {
         type: String,
     },
+    publicId: {
+        type: String,
+    }
+    ,
 }, {
     timestamps: true,
     versionKey: false

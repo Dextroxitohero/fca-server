@@ -17,7 +17,7 @@ export const getAllHeaderImage = async (req, res) => {
 
 export const addheaderImage = async (req, res) => {
     try {
-        const { name, urlName } = req.body;
+        const { name, urlName, publicId } = req.body;
 
         const existingHeaderImage = await HeaderImage.findOne({ name });
         if (existingHeaderImage) {
@@ -28,7 +28,8 @@ export const addheaderImage = async (req, res) => {
         // Crear un nuevo level
         const newHeaderImage = new HeaderImage({
             name,
-            urlName
+            urlName,
+            publicId
         });
         await newHeaderImage.save();
 
