@@ -37,7 +37,7 @@ export const createUser = async (req, res) => {
 		const foundUser = await User.findOne({ email })
 
 
-		if(foundUser){
+		if (foundUser) {
 			return res.status(409).json({
 				message: 'El usuario ya se encuentra registrado en la plataforma'
 			})
@@ -52,11 +52,11 @@ export const createUser = async (req, res) => {
 		}
 
 		await sendMail({
-            email: email,
-            subject: "Bienvenido a la plataforma CFA",
+			email: email,
+			subject: "Bienvenido a la plataforma CFA",
 			template: 'templateCreateByInvitation',
-			data: { email: email, password: password}
-        });
+			data: { email: email, password: password }
+		});
 
 		return res.status(201).json({
 			message: 'Tu cuenta ha sido creada con exito. Inicia sesión para continuar',
@@ -69,17 +69,20 @@ export const createUser = async (req, res) => {
 	}
 }
 
-export const getUser = async (req, res) => {
+export const getUserById = async (req, res) => {
+	const { userId } = req.params;
+
 	try {
-		const user = await User.findById(req.user._id);
+		
+		const user = await User.findById(userId);
+
 		if (!user) {
-			return res.status(400).json({
+			return res.status(404).json({
 				message: "User doesn't exists"
 			})
 		}
 
 		return res.status(200).json({
-			success: true,
 			user
 		})
 
@@ -224,4 +227,41 @@ export const createUserByInvitation = async (req, res) => {
 	}
 }
 
+
+export const getAllStudents = async (req, res) => {
+	try {
+		const students = await User.find({ typeUser: 'estudiante' },
+			'-password -phone -location -education -dateBirth -refreshToken -updatedAt'
+		).sort({ createdAt: -1 });
+
+		const studentsFormatted = students.map(user => {
+			const date = new Date(user.createdAt);
+			const options = { day: 'numeric', month: 'long', year: 'numeric' };
+			const formatter = new Intl.DateTimeFormat('es-ES', options);
+			const formattedDate = formatter.format(date);
+			const [day, month] = formattedDate.split(' de ');
+			const year = formattedDate.split(' ');
+			const yearCut = year[year.length - 1];
+			const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+			const formattedDateWithCapitalizedMonth = `${day} de ${capitalizedMonth} ${yearCut}`;
+
+			const { _id, ...userWithoutId } = user._doc;
+			return {
+				id: _id,
+				...userWithoutId,
+				createdAtFormatted: formattedDateWithCapitalizedMonth
+			};
+		});
+
+		return res.status(200).json({
+			students: studentsFormatted
+		});
+
+	} catch (error) {
+		return res.status(500).json({
+			message: 'Error al obtener la información de los usuarios',
+			error
+		});
+	}
+};
 

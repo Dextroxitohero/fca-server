@@ -3,9 +3,11 @@ import { Router } from 'express';
 const router = Router();
 
 import * as usersCtrl from '../controllers/users.controllers';
-import { authJwt } from '../middlewares';
 
 router.get('/getAllUsers',usersCtrl.getAllUsers);
+router.get('/getAllStudents',usersCtrl.getAllStudents);
+router.get('/getUserById/:userId',usersCtrl.getUserById);
+
 router.post('/' ,usersCtrl.createUser);
 router.post('/newUserByInvitation', usersCtrl.createUserByInvitation);
 // router.get('/', 

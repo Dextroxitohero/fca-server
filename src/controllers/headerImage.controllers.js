@@ -1,9 +1,17 @@
 import HeaderImage from '../models/HeaderImage';
+import cloudinary from "cloudinary/lib/cloudinary";
+import { REACT_APP_CLOUD_NAME, REACT_APP_API_KEY, REACT_APP_API_SECRET } from '../config';
+
+cloudinary.config({
+    cloud_name: REACT_APP_CLOUD_NAME,
+    api_key: REACT_APP_API_KEY,
+    api_secret: REACT_APP_API_SECRET
+});
 
 
 export const getAllHeaderImage = async (req, res) => {
     try {
-        const headerImages = await HeaderImage.find();
+        const headerImages = await HeaderImage.find({ status: true });
 
         return res.status(200).json({ data: headerImages });
 
@@ -17,20 +25,16 @@ export const getAllHeaderImage = async (req, res) => {
 
 export const addheaderImage = async (req, res) => {
     try {
-        const { name, urlName, publicId } = req.body;
+        const { name, urlName, publicId, createdBy, updatedBy } = req.body;
 
-        const existingHeaderImage = await HeaderImage.findOne({ name });
-        if (existingHeaderImage) {
-            return res.status(400).json({
-                message: 'El emcabezado ya existe.'
-            });
-        }
-        // Crear un nuevo level
         const newHeaderImage = new HeaderImage({
             name,
             urlName,
-            publicId
+            publicId,
+            createdBy,
+            updatedBy
         });
+
         await newHeaderImage.save();
 
         return res.status(201).json({
@@ -49,9 +53,15 @@ export const addheaderImage = async (req, res) => {
 export const updateHeaderImage = async (req, res) => {
     try {
         const { headerImageId } = req.params;
-        const { name } = req.body;
+        const { name, urlName, publicId, updatedBy } = req.body;
+        let updateData = {};
 
-        const headerImageToUpdate = await HeaderImage.findByIdAndUpdate(headerImageId, { name }, { new: true });
+        if (publicId) {
+            updateData = { name, urlName, publicId, status: true, updatedBy };
+        } else {
+            updateData = { name, updatedBy };
+        }
+        const headerImageToUpdate = await HeaderImage.findByIdAndUpdate(headerImageId, updateData, { new: true });
 
         if (!headerImageToUpdate) {
             return res.status(404).json({
@@ -74,15 +84,23 @@ export const updateHeaderImage = async (req, res) => {
 
 export const deleteHeaderImage = async (req, res) => {
     try {
-        const { headerImageId } = req.params;
+        const { headerImageId, publicId } = req.params;
 
-        const deletedHeaderImagen = await HeaderImage.findByIdAndRemove(headerImageId);
+        const updatedHeaderImage = await HeaderImage.findByIdAndUpdate(
+            headerImageId,
+            { $set: { status: false } },
+            { new: true }
+        );
 
-        if (!deletedHeaderImagen) {
+        if (!updatedHeaderImage) {
             return res.status(404).json({
                 message: 'No se ha encontrado el emcabezado.'
             });
         }
+
+        cloudinary.v2.uploader.destroy(`uploads/${publicId}`, function (error, result) {})
+            .then(resp => {})
+            .catch(_err => {});
 
         return res.status(200).json({
             message: 'Se ha eliminado con éxito el emcabezado de imagen.',

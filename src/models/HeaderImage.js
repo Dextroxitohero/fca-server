@@ -10,8 +10,19 @@ const headerImageSchema = new Schema({
     },
     publicId: {
         type: String,
+    },
+    status: {
+        type: Boolean,
+        default: true
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    updatedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
     }
-    ,
 }, {
     timestamps: true,
     versionKey: false

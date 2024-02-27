@@ -17,3 +17,8 @@ export const MAIL_PASSWORD = process.env.MAIL_PASSWORD
 export const BASE_URL_DEV = process.env.BASE_URL_DEV
 export const BASE_URL_PRODUCTION = process.env.BASE_URL_PRODUCTION
 
+
+export const REACT_APP_CLOUD_NAME = process.env.REACT_APP_CLOUD_NAME
+export const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY
+export const REACT_APP_API_SECRET = process.env.REACT_APP_API_SECRET
+
