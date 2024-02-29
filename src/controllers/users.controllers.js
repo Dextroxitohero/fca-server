@@ -7,7 +7,7 @@ import { sendMail } from '../libs/sendMail';
 
 export const createUser = async (req, res) => {
 	try {
-
+		console.log('create')
 		const {
 			firstName,
 			secondName,

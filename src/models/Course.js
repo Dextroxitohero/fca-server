@@ -31,7 +31,7 @@ const courseSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['en curso', 'abierto', 'finalizado', 'completado','cancelado'],
+        enum: ['en curso', 'abierto', 'finalizado', 'completado', 'cancelado'],
         default: 'abierto'
     },
     teacher: {
@@ -53,10 +53,14 @@ const courseSchema = new Schema({
     updatedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-    }
+    },
+    idChat: {
+        type: Schema.Types.ObjectId,
+        ref: 'Chat',
+    },
 }, {
     timestamps: true,
     versionKey: false
 });
 
-export default model('Course',courseSchema);
+export default model('Course', courseSchema);

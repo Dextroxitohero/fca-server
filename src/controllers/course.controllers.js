@@ -1,3 +1,4 @@
+import Chat from '../models/Chat';
 import Course from '../models/Course';
 import User from '../models/User';
 
@@ -216,8 +217,8 @@ export const getAllCourses = async (req, res) => {
 export const getCourseById = async (req, res) => {
     try {
         const courseId = req.params.courseId;
-        
-    // Obtén el ID del curso de los parámetros de la solicitud
+
+        // Obtén el ID del curso de los parámetros de la solicitud
 
         // Busca el curso por su ID y poblamos los campos de referencia
         const course = await Course.findById(courseId)
@@ -246,19 +247,32 @@ export const getCourseById = async (req, res) => {
 export const createCourse = async (req, res) => {
     try {
         const courseData = req.body; // Datos del curso a agregar
+
+        // Verificar si el profesor (teacher) existe y obtener su ID
+        const teacherId = courseData.teacher ? courseData.teacher : null;
+
         // Crear un nuevo curso en la base de datos
         const newCourse = new Course(courseData);
         await newCourse.save();
 
+        // Crear un nuevo chat asociado al curso
+        const chatParticipants = [teacherId].filter(Boolean);
+        const newChat = new Chat({ participants: chatParticipants, courseId: newCourse._id });
+        await newChat.save();
+
+        // Asignar el idChat al curso
+        newCourse.idChat = newChat._id;
+        await newCourse.save();
+
         return res.status(201).json({
             message: 'Curso agregado con éxito.',
-            course: newCourse
+            course: newCourse,
         });
-
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             message: 'Error al agregar el curso.',
-            error
+            error,
         });
     }
 };
@@ -281,6 +295,18 @@ export const updateCourse = async (req, res) => {
             return res.status(404).json({
                 message: 'Curso no encontrado.'
             });
+        }
+
+        // Verificar si la propiedad teacher no está vacía y actualizar participantes en el chat
+        const teacher = updatedCourseData.teacher || null;
+        
+        if (teacher) {
+            const chat = await Chat.findOne({ courseId });
+
+            if (chat && !chat.participants.includes(teacher._id)) {
+                chat.participants.push(teacher._id);
+                await chat.save();
+            }
         }
 
         return res.status(200).json({
@@ -320,3 +346,207 @@ export const deleteCourse = async (req, res) => {
         });
     }
 };
+
+
+export const getListStudentsByIdCourse = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+
+        // Buscar el curso por su idCourse
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({
+                message: 'No se encontró el curso con el idCourse proporcionado.',
+            });
+        }
+
+        // Obtener los estudiantes del curso
+        const students = await User.find({ _id: { $in: course.students } }, {
+            matricula: 1,
+            firstName: 1,
+            secondName: 1,
+            lastName: 1,
+            secondSurname: 1,
+        });
+
+        return res.status(200).json({
+            students,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Error al obtener los estudiantes del curso.',
+            error,
+        });
+    }
+}
+
+export const addNewStudentToCourse = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { userId } = req.body;
+
+        // Buscar el curso por su idCourse
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({
+                message: 'No se encontró el curso con el idCourse proporcionado.',
+            });
+        }
+
+        // Verificar si el usuario ya está en el curso
+        if (course.students.includes(userId)) {
+            return res.status(400).json({
+                message: 'El estudiante ya está inscrito en este curso.',
+            });
+        }
+
+        // Verificar si hay cupo disponible (limitStudents mayor a 0)
+        if (course.limitMembers <= 0) {
+            return res.status(400).json({
+                message: 'No hay cupo disponible en este curso.',
+            });
+        }
+
+        // Verificar si el estudiante (usuario) existe
+        const existingUser = await User.findById(userId);
+
+        if (!existingUser) {
+            return res.status(404).json({
+                message: 'No se encontró al estudiante con el id proporcionado.',
+            });
+        }
+
+        // Restar 1 al campo limitMembers
+        course.limitMembers -= 1;
+
+        // Agregar el estudiante al curso
+        course.students.push(userId);
+
+        // Guardar los cambios en el curso
+        await course.save();
+
+        // Agregar el estudiante como participante en el chat
+        const chat = await Chat.findOneAndUpdate(
+            { courseId },
+            { $addToSet: { participants: userId } },
+            { new: true, upsert: true } // Crea el chat si no existe
+        );
+
+        // Actualizar el campo courses del usuario
+        const updatedUser = await User.findByIdAndUpdate(userId,
+            { $push: { courses: courseId } }, { new: true }
+        );
+
+        // Obtener la lista actualizada de estudiantes del curso con los campos deseados
+        const updatedStudentsList = await User.find(
+            { _id: { $in: course.students } },
+            { matricula: 1, firstName: 1, secondName: 1, lastName: 1, secondSurname: 1 }
+        );
+
+        return res.status(200).json({
+            message: 'Estudiante agregado al curso y al chat exitosamente.',
+            updatedStudents: updatedStudentsList,
+        });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: 'Error al agregar el estudiante al curso.',
+            error,
+        });
+    }
+}
+
+export const removeStudentFromCourse = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { userId } = req.body;
+
+        // Buscar el curso por su idCourse
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({
+                message: 'No se encontró el curso con el idCourse proporcionado.',
+            });
+        }
+
+        // Verificar si el usuario está inscrito en el curso
+        if (!course.students.includes(userId)) {
+            return res.status(400).json({
+                message: 'El estudiante no está inscrito en este curso.',
+            });
+        }
+
+        // Incrementar en 1 el campo limitMembers
+        course.limitMembers += 1;
+
+        // Eliminar el estudiante del curso
+        course.students = course.students.filter(studentId => studentId.toString() !== userId);
+
+        // Guardar los cambios en el curso
+        await course.save();
+
+        // Actualizar el campo courses del usuario
+        await User.findByIdAndUpdate(userId, { $pull: { courses: courseId } });
+
+        // Eliminar al estudiante del campo participants en el modelo Chat
+        await Chat.findOneAndUpdate(
+            { courseId },
+            { $pull: { participants: userId } },
+            { new: true }
+        );
+
+        // Obtener la lista actualizada de estudiantes del curso con los campos deseados
+        const updatedStudentsList = await User.find(
+            { _id: { $in: course.students } },
+            { matricula: 1, firstName: 1, secondName: 1, lastName: 1, secondSurname: 1 }
+        );
+
+        return res.status(200).json({
+            message: 'Estudiante eliminado del curso exitosamente.',
+            updatedStudents: updatedStudentsList,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Error al eliminar el estudiante del curso.',
+            error,
+        });
+    }
+};
+
+
+
+export const getStudentsNotInCourse = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+
+        // Obtener el curso por su idCourse
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({
+                message: 'No se encontró el curso con el idCourse proporcionado.',
+            });
+        }
+
+        // Obtener todos los usuarios con typeUser igual a 'estudiante'
+        const students = await User.find(
+            { typeUser: 'estudiante' },
+            { matricula: 1, firstName: 1, secondName: 1, lastName: 1, secondSurname: 1 }
+        );
+
+        // Filtrar los estudiantes que ya están inscritos en el curso
+        const studentsNotInCourse = students.filter(student => !course.students.includes(student._id));
+
+        return res.status(200).json({
+            students: studentsNotInCourse,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Error al obtener la lista de estudiantes.',
+            error,
+        });
+    }
+}

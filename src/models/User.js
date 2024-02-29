@@ -7,6 +7,10 @@ const userSchema = new Schema({
         type: Number,
         unique: true,
     },
+    avatarUrl: {
+        type: String,
+        default: 'https://res.cloudinary.com/dax0v05jz/image/upload/v1708645791/uploads/hbzdzch5ldxw6pszwmej.png'
+    },
     firstName: {
         type: String,
     },

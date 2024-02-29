@@ -20,6 +20,7 @@ import courseRoutes from './routes/course.routes';
 import accountsNumberRoutes from './routes/accountsNumber.routes';
 import refreshTokenRoutes from './routes/refreshToken.routes';
 import headerImageRoutes from './routes/headerImage.routes';
+import chatRoutes from './routes/chat.routes';
 
 import { BASE_URL_DEV, BASE_URL_PRODUCTION } from './config';
 import { updateEndCoursesStatus } from './tasks/updateEndCourse.task';
@@ -97,5 +98,6 @@ app.use('/course', courseRoutes);
 app.use('/accountNumber', accountsNumberRoutes);
 app.use('/refresh-token', refreshTokenRoutes);
 app.use('/headerImage', headerImageRoutes);
+app.use('/chat', chatRoutes);
 
 export default app;

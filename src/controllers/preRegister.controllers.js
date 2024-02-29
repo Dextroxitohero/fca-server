@@ -4,6 +4,7 @@ import PreRegister from '../models/PreRegister';
 import Course from '../models/Course';
 import User from '../models/User';
 import { formatDate } from '../libs/formatDate';
+import Chat from '../models/Chat';
 
 export const emailVerification = async (req, res) => {
     try {
@@ -452,6 +453,11 @@ export const validateCandidate = async (req, res) => {
         await foundCourse.save();
 
         await saveUser.save();
+
+        const chat = await Chat.findOneAndUpdate( idCourse ,
+            { $push: { participants: studentId } },
+            { new: true } // Crea el chat si no existe
+        );
 
         if (saveUser === null) {
             return res.status(500).json({
