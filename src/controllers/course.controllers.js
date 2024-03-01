@@ -363,6 +363,7 @@ export const getListStudentsByIdCourse = async (req, res) => {
 
         // Obtener los estudiantes del curso
         const students = await User.find({ _id: { $in: course.students } }, {
+            avatarUrl: 1,
             matricula: 1,
             firstName: 1,
             secondName: 1,
@@ -447,7 +448,7 @@ export const addNewStudentToCourse = async (req, res) => {
 
         return res.status(200).json({
             message: 'Estudiante agregado al curso y al chat exitosamente.',
-            updatedStudents: updatedStudentsList,
+            students: updatedStudentsList,
         });
     } catch (error) {
         console.log(error)
@@ -460,8 +461,7 @@ export const addNewStudentToCourse = async (req, res) => {
 
 export const removeStudentFromCourse = async (req, res) => {
     try {
-        const { courseId } = req.params;
-        const { userId } = req.body;
+        const { courseId, userId } = req.params;
 
         // Buscar el curso por su idCourse
         const course = await Course.findById(courseId);
@@ -517,7 +517,6 @@ export const removeStudentFromCourse = async (req, res) => {
 };
 
 
-
 export const getStudentsNotInCourse = async (req, res) => {
     try {
         const { courseId } = req.params;
@@ -534,14 +533,21 @@ export const getStudentsNotInCourse = async (req, res) => {
         // Obtener todos los usuarios con typeUser igual a 'estudiante'
         const students = await User.find(
             { typeUser: 'estudiante' },
-            { matricula: 1, firstName: 1, secondName: 1, lastName: 1, secondSurname: 1 }
+            { _id: 1, matricula: 1, firstName: 1, secondName: 1, lastName: 1, secondSurname: 1 }
         );
 
         // Filtrar los estudiantes que ya están inscritos en el curso
         const studentsNotInCourse = students.filter(student => !course.students.includes(student._id));
 
+        // Crear la lista con el formato deseado
+        const formattedStudents = studentsNotInCourse.map(student => ({
+            id: student._id,
+            name: `${student.firstName} ${student.secondName || ''} ${student.lastName || ''} ${student.secondSurname || ''}`,
+            description: `${student.firstName} ${student.secondName || ''} ${student.lastName || ''} ${student.secondSurname || ''}`,
+        }));
+
         return res.status(200).json({
-            students: studentsNotInCourse,
+            students: formattedStudents,
         });
     } catch (error) {
         return res.status(500).json({
@@ -549,4 +555,4 @@ export const getStudentsNotInCourse = async (req, res) => {
             error,
         });
     }
-}
+};
