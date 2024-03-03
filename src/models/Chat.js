@@ -13,6 +13,7 @@ const chatSchema = new Schema({
             },
             content: String,
             url: String,
+            publicId: String,
             timestamp: {
                 type: Date,
                 default: Date.now,

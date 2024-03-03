@@ -264,18 +264,28 @@ export const createCourse = async (req, res) => {
         newCourse.idChat = newChat._id;
         await newCourse.save();
 
+        // Agregar el courseId al usuario teacher
+        if (teacherId) {
+            const teacher = await User.findById(teacherId);
+
+            if (teacher) {
+                teacher.courses.push(newCourse._id);
+                await teacher.save();
+            }
+        }
+
         return res.status(201).json({
             message: 'Curso agregado con éxito.',
             course: newCourse,
         });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({
             message: 'Error al agregar el curso.',
             error,
         });
     }
 };
+
 
 export const updateCourse = async (req, res) => {
     try {
@@ -298,14 +308,40 @@ export const updateCourse = async (req, res) => {
         }
 
         // Verificar si la propiedad teacher no está vacía y actualizar participantes en el chat
-        const teacher = updatedCourseData.teacher || null;
-        
-        if (teacher) {
+        const newTeacherId = updatedCourseData.teacher || null;
+
+        if (newTeacherId) {
             const chat = await Chat.findOne({ courseId });
 
-            if (chat && !chat.participants.includes(teacher._id)) {
-                chat.participants.push(teacher._id);
-                await chat.save();
+            if (chat) {
+                // Verificar si el nuevo teacher ya está en la lista de participantes del chat
+                if (!chat.participants.includes(newTeacherId)) {
+                    // Agregar el nuevo teacher a la lista de participantes del chat
+                    chat.participants.push(newTeacherId);
+                    await chat.save();
+                }
+            }
+
+            // Verificar si el curso no está ya en la lista de cursos del nuevo teacher
+            const newTeacher = await User.findById(newTeacherId);
+
+            if (newTeacher && !newTeacher.courses.includes(updatedCourse._id)) {
+                // Agregar el curso a la lista de cursos del nuevo teacher
+                newTeacher.courses.push(updatedCourse._id);
+                await newTeacher.save();
+            }
+        }
+
+        // Verificar si se cambió el teacher y borrar al antiguo
+        const oldTeacherId = updatedCourse.teacher;
+
+        if (newTeacherId && oldTeacherId && newTeacherId.toString() !== oldTeacherId.toString()) {
+            // Eliminar el curso de la lista de cursos del antiguo teacher
+            const oldTeacher = await User.findById(oldTeacherId);
+
+            if (oldTeacher) {
+                oldTeacher.courses = oldTeacher.courses.filter(course => course.toString() !== updatedCourse._id.toString());
+                await oldTeacher.save();
             }
         }
 
