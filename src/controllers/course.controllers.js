@@ -298,57 +298,78 @@ export const updateCourse = async (req, res) => {
             }
         });
 
-        // Buscar y actualizar el curso por su ID
-        const updatedCourse = await Course.findByIdAndUpdate(courseId, updatedCourseData, { new: true });
+        // Buscar curso por su ID
+        const course = await Course.findById(courseId);
 
-        if (!updatedCourse) {
+        if (!course) {
             return res.status(404).json({
                 message: 'Curso no encontrado.'
             });
         }
 
-        // Verificar si la propiedad teacher no está vacía y actualizar participantes en el chat
-        const newTeacherId = updatedCourseData.teacher || null;
+        if (updatedCourseData.teacher) {
+            // Verificar si el curso actual ya tiene un profesor asignado
+            const currentTeacherId = course.teacher || null;
+            const newTeacherId = updatedCourseData.teacher || null;
 
-        if (newTeacherId) {
-            const chat = await Chat.findOne({ courseId });
+            //Obtener el chat del curso
+            const newChat = await Chat.findById(course.idChat);
 
-            if (chat) {
-                // Verificar si el nuevo teacher ya está en la lista de participantes del chat
-                if (!chat.participants.includes(newTeacherId)) {
-                    // Agregar el nuevo teacher a la lista de participantes del chat
-                    chat.participants.push(newTeacherId);
-                    await chat.save();
+            if (updatedCourseData.teacher && course.teacher) {
+
+                const currentTeacher = await User.findById(currentTeacherId);
+                const newTeacher = await User.findById(newTeacherId._id);
+
+                // Eliminar el curso de la lista de cursos del profesor actual
+                if (currentTeacher && currentTeacher.courses.includes(courseId)) {
+                    currentTeacher.courses.pull(courseId);
+                    await currentTeacher.save();
                 }
+
+                //Agregar el curso a la lista de cursos del nuevo profesor si aún no está presente
+                if (newTeacher && !newTeacher.courses.includes(courseId)) {
+                    newTeacher.courses.push(courseId);
+                    await newTeacher.save();
+                }
+
+                //Remover al profesor actual del chat del curso
+                if (currentTeacherId && newChat.participants.includes(currentTeacherId.toString())) {
+                    newChat.participants.pull(currentTeacherId);
+                    await newChat.save();
+                }
+
+                //Agregar al chat del curso al nuevo profesor
+                if (newTeacherId && !newChat.participants.includes(newTeacherId._id.toString())) {
+                    newChat.participants.push(newTeacherId._id);
+                    await newChat.save();
+                }
+
+            } else if (updatedCourseData.teacher && !course.teacher) {
+                const newTeacher = await User.findById(newTeacherId._id);
+
+                if (newTeacher && !newTeacher.courses.includes(courseId)) {
+                    newTeacher.courses.push(courseId);
+                    await newTeacher.save();
+                }
+
+                //Agregar al chat del curso al nuevo profesor
+                if (newTeacherId && !newChat.participants.includes(newTeacherId._id.toString())) {
+                    newChat.participants.push(newTeacherId._id);
+                    await newChat.save();
+                }
+
             }
 
-            // Verificar si el curso no está ya en la lista de cursos del nuevo teacher
-            const newTeacher = await User.findById(newTeacherId);
-
-            if (newTeacher && !newTeacher.courses.includes(updatedCourse._id)) {
-                // Agregar el curso a la lista de cursos del nuevo teacher
-                newTeacher.courses.push(updatedCourse._id);
-                await newTeacher.save();
-            }
         }
 
-        // Verificar si se cambió el teacher y borrar al antiguo
-        const oldTeacherId = updatedCourse.teacher;
-
-        if (newTeacherId && oldTeacherId && newTeacherId.toString() !== oldTeacherId.toString()) {
-            // Eliminar el curso de la lista de cursos del antiguo teacher
-            const oldTeacher = await User.findById(oldTeacherId);
-
-            if (oldTeacher) {
-                oldTeacher.courses = oldTeacher.courses.filter(course => course.toString() !== updatedCourse._id.toString());
-                await oldTeacher.save();
-            }
-        }
+        // Actualizar el curso con los nuevos datos
+        const updatedCourse = await Course.findByIdAndUpdate(courseId, updatedCourseData, { new: true });
 
         return res.status(200).json({
             message: 'Curso actualizado con éxito.',
             course: updatedCourse
         });
+        
     } catch (error) {
         return res.status(500).json({
             message: 'Error al actualizar el curso.',
@@ -356,6 +377,7 @@ export const updateCourse = async (req, res) => {
         });
     }
 };
+
 
 export const deleteCourse = async (req, res) => {
     try {
