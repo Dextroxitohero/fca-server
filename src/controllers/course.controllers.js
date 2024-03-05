@@ -3,216 +3,285 @@ import Course from '../models/Course';
 import User from '../models/User';
 
 export const getAllCourses = async (req, res) => {
-    const { id, roles } = req.params;
-
+    let allCourses = [];
     try {
-        let courses;
+        const { userId, roles } = req.params;
+        if (roles === 'admin') {
+            allCourses = await Course.find()
+                .populate('headerImage', '_id urlName')
+                .populate('language', 'name path')
+                .populate('level', 'name')
+                .populate('color', 'clase')
+                .populate('teacher', 'firstName lastName')
+                .populate('hours')
+                .populate('days');
 
-        // Obtener el usuario por ID para acceder a la propiedad 'courses'
-        const user = await User.findById(id);
+        } else if (roles === 'user') {
+            // Buscar cursos donde el usuario sea participante
+            const participantCourses = await Course.find({ participants: userId })
+                .populate('headerImage', '_id urlName')
+                .populate('language', 'name path')
+                .populate('level', 'name')
+                .populate('color', 'clase')
+                .populate('teacher', 'firstName lastName')
+                .populate('hours')
+                .populate('days');
 
-        if (!user) {
-            return res.status(404).json({
-                message: 'Usuario no encontrado',
-            })
+            // Buscar cursos donde el usuario sea profesor
+            const teacherCourses = await Course.find({ teacher: userId })
+                .populate('headerImage', '_id urlName')
+                .populate('language', 'name path')
+                .populate('level', 'name')
+                .populate('color', 'clase')
+                .populate('teacher', 'firstName lastName')
+                .populate('hours')
+                .populate('days');
+
+            // Concatenar ambos conjuntos de cursos
+            allCourses = [...participantCourses, ...teacherCourses];
+
         }
 
-        if (roles === 'user') {
-            courses = await Course.aggregate([
-                {
-                    $match: {
-                        _id: { $in: user.courses },
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'languages',
-                        localField: 'language',
-                        foreignField: '_id',
-                        as: 'language'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'levels',
-                        localField: 'level',
-                        foreignField: '_id',
-                        as: 'level'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'colors',
-                        localField: 'color',
-                        foreignField: '_id',
-                        as: 'color'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'users',
-                        localField: 'teacher',
-                        foreignField: '_id',
-                        as: 'teacher'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'headerimages',
-                        localField: 'headerImage',
-                        foreignField: '_id',
-                        as: 'headerImage'
-                    }
-                },
-                {
-                    $unwind: '$headerImage'
-                },
-                {
-                    $project: {
-                        language: {
-                            $ifNull: [{ $arrayElemAt: ['$language.name', 0] }, '']
-                        },
-                        path: {
-                            $ifNull: [{ $arrayElemAt: ['$language.path', 0] }, '']
-                        },
-                        level: {
-                            $ifNull: [{ $arrayElemAt: ['$level.name', 0] }, '']
-                        },
-                        color: {
-                            $ifNull: [{ $arrayElemAt: ['$color.clase', 0] }, '']
-                        },
-                        teacher: {
-                            $cond: {
-                                if: { $gt: [{ $size: '$teacher' }, 0] },
-                                then: {
-                                    $concat: [
-                                        { $ifNull: [{ $arrayElemAt: ['$teacher.firstName', 0] }, ''] },
-                                        ' ',
-                                        { $ifNull: [{ $arrayElemAt: ['$teacher.lastName', 0] }, ''] }
-                                    ]
-                                },
-                                else: ''
-                            }
-                        },
-                        headerImage: {
-                            _id: {
-                                $ifNull: ['$headerImage._id', null]
-                            },
-                            urlName: {
-                                $ifNull: ['$headerImage.urlName', '']
-                            }
-                        },
-                        limitMembers: { $ifNull: ['$limitMembers', ''] },
-                        fromDate: { $ifNull: ['$fromDate', ''] },
-                        toDate: { $ifNull: ['$toDate', ''] },
-                        hours: { $ifNull: ['$hours', ''] },
-                        days: { $ifNull: ['$days', ''] },
-                        status: { $ifNull: ['$status', ''] }
-                    }
-                }
-            ]);
-        } else if (roles === 'admin') {
-            courses = await Course.aggregate([
-                {
-                    $lookup: {
-                        from: 'languages',
-                        localField: 'language',
-                        foreignField: '_id',
-                        as: 'language'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'levels',
-                        localField: 'level',
-                        foreignField: '_id',
-                        as: 'level'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'colors',
-                        localField: 'color',
-                        foreignField: '_id',
-                        as: 'color'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'users',
-                        localField: 'teacher',
-                        foreignField: '_id',
-                        as: 'teacher'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'headerimages',
-                        localField: 'headerImage',
-                        foreignField: '_id',
-                        as: 'headerImage'
-                    }
-                },
-                {
-                    $unwind: '$headerImage'
-                },
-                {
-                    $project: {
-                        language: {
-                            $ifNull: [{ $arrayElemAt: ['$language.name', 0] }, '']
-                        },
-                        path: {
-                            $ifNull: [{ $arrayElemAt: ['$language.path', 0] }, '']
-                        },
-                        level: {
-                            $ifNull: [{ $arrayElemAt: ['$level.name', 0] }, '']
-                        },
-                        color: {
-                            $ifNull: [{ $arrayElemAt: ['$color.clase', 0] }, '']
-                        },
-                        teacher: {
-                            $cond: {
-                                if: { $gt: [{ $size: '$teacher' }, 0] },
-                                then: {
-                                    $concat: [
-                                        { $ifNull: [{ $arrayElemAt: ['$teacher.firstName', 0] }, ''] },
-                                        ' ',
-                                        { $ifNull: [{ $arrayElemAt: ['$teacher.lastName', 0] }, ''] }
-                                    ]
-                                },
-                                else: ''
-                            }
-                        },
-                        headerImage: {
-                            _id: {
-                                $ifNull: ['$headerImage._id', null]
-                            },
-                            urlName: {
-                                $ifNull: ['$headerImage.urlName', '']
-                            }
-                        },
-                        limitMembers: { $ifNull: ['$limitMembers', ''] },
-                        fromDate: { $ifNull: ['$fromDate', ''] },
-                        toDate: { $ifNull: ['$toDate', ''] },
-                        hours: { $ifNull: ['$hours', ''] },
-                        days: { $ifNull: ['$days', ''] },
-                        status: { $ifNull: ['$status', ''] }
-                    }
-                }
-            ]);
-        } else {
-            return res.status(403).json({ message: 'No tienes permisos para acceder a esta información.' });
-        }
+        const formattedCourses = allCourses.map(course => {
+            const formattedCourse = {
+                _id: course._id,
+                headerImage: course.headerImage ? course.headerImage : {},
+                language: course.language ? course.language.name : '',
+                path: course.language ? course.language.path : '',
+                level: course.level ? course.level.name : '',
+                color: course.color ? course.color.clase : '',
+                teacher: course.teacher ? `${course.teacher.firstName} ${course.teacher.lastName}` : '',
+                limitMembers: course.limitMembers || 0,
+                fromDate: course.fromDate || null,
+                toDate: course.toDate || null,
+                hours: course.hours ? course.hours.map(hour => ({ id: hour.id, time: hour.time })) : [],
+                days: course.days ? course.days.map(day => ({ id: day.id, day: day.day, simbolo: day.simbolo })) : [],
+                status: course.status || ''
+            };
 
-        return res.status(200).json({ courses });
+            return formattedCourse;
+        });
 
+        return res.status(200).json({ courses: formattedCourses });
     } catch (error) {
         return res.status(500).json({
-            message: 'Error al obtener la lista de cursos.',
+            message: 'Error al obtener la lista de cursos para el usuario.',
             error
         });
     }
 };
+
+// export const getAllCourses = async (req, res) => {
+//     const { userId, roles } = req.params;
+
+//     try {
+//         let courses;
+
+//         // Obtener el usuario por ID para acceder a la propiedad 'courses'
+//         const user = await User.findById(id);
+
+//         if (!user) {
+//             return res.status(404).json({
+//                 message: 'Usuario no encontrado',
+//             })
+//         }
+
+//         if (roles === 'user') {
+//             courses = await Course.aggregate([
+//                 {
+//                     $match: {
+//                         _id: { $in: user.courses },
+//                     },
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'languages',
+//                         localField: 'language',
+//                         foreignField: '_id',
+//                         as: 'language'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'levels',
+//                         localField: 'level',
+//                         foreignField: '_id',
+//                         as: 'level'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'colors',
+//                         localField: 'color',
+//                         foreignField: '_id',
+//                         as: 'color'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'users',
+//                         localField: 'teacher',
+//                         foreignField: '_id',
+//                         as: 'teacher'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'headerimages',
+//                         localField: 'headerImage',
+//                         foreignField: '_id',
+//                         as: 'headerImage'
+//                     }
+//                 },
+//                 {
+//                     $unwind: '$headerImage'
+//                 },
+//                 {
+//                     $project: {
+//                         language: {
+//                             $ifNull: [{ $arrayElemAt: ['$language.name', 0] }, '']
+//                         },
+//                         path: {
+//                             $ifNull: [{ $arrayElemAt: ['$language.path', 0] }, '']
+//                         },
+//                         level: {
+//                             $ifNull: [{ $arrayElemAt: ['$level.name', 0] }, '']
+//                         },
+//                         color: {
+//                             $ifNull: [{ $arrayElemAt: ['$color.clase', 0] }, '']
+//                         },
+//                         teacher: {
+//                             $cond: {
+//                                 if: { $gt: [{ $size: '$teacher' }, 0] },
+//                                 then: {
+//                                     $concat: [
+//                                         { $ifNull: [{ $arrayElemAt: ['$teacher.firstName', 0] }, ''] },
+//                                         ' ',
+//                                         { $ifNull: [{ $arrayElemAt: ['$teacher.lastName', 0] }, ''] }
+//                                     ]
+//                                 },
+//                                 else: ''
+//                             }
+//                         },
+//                         headerImage: {
+//                             _id: {
+//                                 $ifNull: ['$headerImage._id', null]
+//                             },
+//                             urlName: {
+//                                 $ifNull: ['$headerImage.urlName', '']
+//                             }
+//                         },
+//                         limitMembers: { $ifNull: ['$limitMembers', ''] },
+//                         fromDate: { $ifNull: ['$fromDate', ''] },
+//                         toDate: { $ifNull: ['$toDate', ''] },
+//                         hours: { $ifNull: ['$hours', ''] },
+//                         days: { $ifNull: ['$days', ''] },
+//                         status: { $ifNull: ['$status', ''] }
+//                     }
+//                 }
+//             ]);
+//         } else if (roles === 'admin') {
+//             courses = await Course.aggregate([
+//                 {
+//                     $lookup: {
+//                         from: 'languages',
+//                         localField: 'language',
+//                         foreignField: '_id',
+//                         as: 'language'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'levels',
+//                         localField: 'level',
+//                         foreignField: '_id',
+//                         as: 'level'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'colors',
+//                         localField: 'color',
+//                         foreignField: '_id',
+//                         as: 'color'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'users',
+//                         localField: 'teacher',
+//                         foreignField: '_id',
+//                         as: 'teacher'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: 'headerimages',
+//                         localField: 'headerImage',
+//                         foreignField: '_id',
+//                         as: 'headerImage'
+//                     }
+//                 },
+//                 {
+//                     $unwind: '$headerImage'
+//                 },
+//                 {
+//                     $project: {
+//                         language: {
+//                             $ifNull: [{ $arrayElemAt: ['$language.name', 0] }, '']
+//                         },
+//                         path: {
+//                             $ifNull: [{ $arrayElemAt: ['$language.path', 0] }, '']
+//                         },
+//                         level: {
+//                             $ifNull: [{ $arrayElemAt: ['$level.name', 0] }, '']
+//                         },
+//                         color: {
+//                             $ifNull: [{ $arrayElemAt: ['$color.clase', 0] }, '']
+//                         },
+//                         teacher: {
+//                             $cond: {
+//                                 if: { $gt: [{ $size: '$teacher' }, 0] },
+//                                 then: {
+//                                     $concat: [
+//                                         { $ifNull: [{ $arrayElemAt: ['$teacher.firstName', 0] }, ''] },
+//                                         ' ',
+//                                         { $ifNull: [{ $arrayElemAt: ['$teacher.lastName', 0] }, ''] }
+//                                     ]
+//                                 },
+//                                 else: ''
+//                             }
+//                         },
+//                         headerImage: {
+//                             _id: {
+//                                 $ifNull: ['$headerImage._id', null]
+//                             },
+//                             urlName: {
+//                                 $ifNull: ['$headerImage.urlName', '']
+//                             }
+//                         },
+//                         limitMembers: { $ifNull: ['$limitMembers', ''] },
+//                         fromDate: { $ifNull: ['$fromDate', ''] },
+//                         toDate: { $ifNull: ['$toDate', ''] },
+//                         hours: { $ifNull: ['$hours', ''] },
+//                         days: { $ifNull: ['$days', ''] },
+//                         status: { $ifNull: ['$status', ''] }
+//                     }
+//                 }
+//             ]);
+//         } else {
+//             return res.status(403).json({ message: 'No tienes permisos para acceder a esta información.' });
+//         }
+
+//         return res.status(200).json({ courses });
+
+//     } catch (error) {
+//         return res.status(500).json({
+//             message: 'Error al obtener la lista de cursos.',
+//             error
+//         });
+//     }
+// };
 
 export const getCourseById = async (req, res) => {
     try {
@@ -369,7 +438,7 @@ export const updateCourse = async (req, res) => {
             message: 'Curso actualizado con éxito.',
             course: updatedCourse
         });
-        
+
     } catch (error) {
         return res.status(500).json({
             message: 'Error al actualizar el curso.',
