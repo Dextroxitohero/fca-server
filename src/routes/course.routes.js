@@ -4,7 +4,6 @@ const router = Router();
 
 import * as courseCtrl from '../controllers/course.controllers';
 
-// router.get(`/getListCourse/:userId/:roles`, courseCtrl.getCourseList);
 router.get(`/getAllCourse/:userId/:roles`, courseCtrl.getAllCourses);
 router.get('/findCourseById/:courseId', courseCtrl.getCourseById);
 router.get('/getListStudentsCourseById/:courseId', courseCtrl.getListStudentsByIdCourse);
